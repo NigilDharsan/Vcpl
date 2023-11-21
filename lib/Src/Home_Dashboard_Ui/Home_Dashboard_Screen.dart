@@ -94,12 +94,12 @@ Widget _DashBoardCard(context,{ required String cardTitle, required String cardI
             //COUNT
             Padding(
               padding: const EdgeInsets.only(top: 15,bottom: 15),
-              child: Row(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Icon(Icons.shopping_cart_rounded,color: blue3,size: 25,),
-                  const Spacer(),
+                  Center(child: Icon(Icons.shopping_cart_rounded,color: blue3,size: 45,)),
+                  SizedBox(height: 5,),
                   //CARD TITLE
                   Container(
                     width: 100,
