@@ -26,7 +26,7 @@ class _Home_Dashboard_ScreenState extends State<Home_Dashboard_Screen> {
             child: Icon(Icons.person,size: 20,),
           ),
         ),
-      ],isNav: null,),
+      ],isNav: null, isBlue: true,),
       body: Padding(
         padding: const EdgeInsets.only(left: 20,right: 20),
         child: Column(

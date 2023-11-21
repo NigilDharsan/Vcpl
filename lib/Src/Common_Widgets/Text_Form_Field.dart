@@ -71,11 +71,11 @@ Widget textFormField2(
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(5),
-            borderSide: BorderSide(color: black6),
+            borderSide: BorderSide(color: white1),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(5),
-            borderSide: BorderSide(color: black6),
+            borderSide: BorderSide(color: white1),
           ),
           fillColor: white1,
           filled: true,
@@ -250,15 +250,16 @@ Widget textFormFieldSearchBar(
           hintStyle: phoneHT,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: white2),
+            borderSide: BorderSide(color: white3),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: white2),
+            borderSide: BorderSide(color: white3),
           ),
           fillColor: white3,
           filled: true,
           prefixIcon: Icon(Icons.search,size: 24,color: grey2,),
+          suffix: Icon(Icons.filter_list,size: 24,color: Colors.black,)
         ),
 
         onChanged: onChanged,
@@ -341,7 +342,9 @@ Widget collegeRowTitle(String pathPNG, String companyName,
 
 
 //DropDownExperience
-Widget dropDownField(context,{required String? value,required List<String>? listValue,required void Function(String?)? onChanged}){
+Widget dropDownField(context,{
+  required String? value,required List<String>? listValue,
+  required void Function(String?)? onChanged,required String hint}){
   return  Container(
     height: 50,
     width: MediaQuery.of(context).size.width,
@@ -350,6 +353,10 @@ Widget dropDownField(context,{required String? value,required List<String>? list
         color: white1
     ),
     child:  DropdownButtonFormField<String>(
+      hint:Padding(
+        padding: const EdgeInsets.only(left: 10),
+        child: Text(hint,style: phoneHT,),
+      ) ,
       value: value,
       isExpanded: true,
       decoration:

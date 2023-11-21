@@ -4,6 +4,7 @@ import 'Common_Colors.dart';
 
 TextStyle LoginT=TextStyle( fontFamily: 'Roboto', fontSize: 24, color: Color.fromRGBO(52, 52, 52, 1), fontWeight: FontWeight.w700);
 TextStyle appTitle=TextStyle( fontFamily: 'Roboto', fontSize: 18, color: blue3, fontWeight: FontWeight.w700);
+TextStyle appTitleW=TextStyle( fontFamily: 'Roboto', fontSize: 18, color: blue3, fontWeight: FontWeight.w700);
 TextStyle appTitle2=TextStyle( fontFamily: 'Roboto', fontSize: 18, color: white1, fontWeight: FontWeight.w500);
 TextStyle notificationTitle=TextStyle( fontFamily: 'Nunito', fontSize: 16, color: blue3, fontWeight: FontWeight.w700);
 TextStyle ProuctT=TextStyle( fontFamily: 'Roboto', fontSize: 20, color: Color.fromRGBO(52, 52, 52, 1), fontWeight: FontWeight.w700);
@@ -21,12 +22,15 @@ TextStyle cardT=TextStyle( fontFamily: 'Inter', fontSize: 16, color: black5, fon
 TextStyle logintxt=TextStyle( fontFamily: 'Inter', fontSize: 20, color: Color.fromRGBO(0, 0, 0, 1), fontWeight: FontWeight.w700);
 TextStyle TitleT=TextStyle( fontFamily: 'Inter', fontSize: 24, color: Color.fromRGBO(0, 0, 0, 1), fontWeight: FontWeight.w700);
 TextStyle inboxcompany=TextStyle( fontFamily: 'Inter', fontSize: 18, color: Color.fromRGBO(0, 0, 0, 1), fontWeight: FontWeight.w500);
-TextStyle TBlack=TextStyle( fontFamily: 'Inter', fontSize: 20, color: Color.fromRGBO(0, 0, 0, 1), fontWeight: FontWeight.w500);
+TextStyle TBlack=TextStyle( fontFamily: 'Inter', fontSize: 20, color: Color.fromRGBO(0, 0, 0, 1), fontWeight: FontWeight.w600);
 TextStyle profileT=TextStyle( fontFamily: 'Inter', fontSize: 22, color: black6, fontWeight: FontWeight.w500);
 TextStyle appLoginT=TextStyle( fontFamily: 'Inter', fontSize: 22, color: black4, fontWeight: FontWeight.w500);
 TextStyle signUpT=TextStyle( fontFamily: 'Inter', fontSize: 12, color: blue1, fontWeight: FontWeight.w700);
 TextStyle richtext1=TextStyle( fontFamily: 'Inter', fontSize: 12, color: grey1, fontWeight: FontWeight.w500);
 TextStyle richtext2=TextStyle( fontFamily: 'Inter', fontSize: 12, color: blue3, fontWeight: FontWeight.w700);
+TextStyle Homegrey2 =TextStyle( fontFamily: 'Inter', fontSize: 16, color: Color.fromRGBO(121, 121, 121, 1), fontWeight: FontWeight.w500);
+TextStyle DateT =TextStyle( fontFamily: 'Inter', fontSize: 16, color: Color.fromRGBO(0, 0, 0, 1), fontWeight: FontWeight.w600);
+
 
 
 
@@ -78,6 +82,9 @@ TextStyle TaskT1=TextStyle( fontFamily: 'Inter', fontSize: 14, color:blue3, font
 TextStyle TaskT2=TextStyle( fontFamily: 'Inter', fontSize: 20, color:blue3, fontWeight: FontWeight.w700,);
 TextStyle offerT=TextStyle( fontFamily: 'Inter', fontSize: 14, color:grey1, fontWeight: FontWeight.w600,);
 
+TextStyle green=TextStyle( fontFamily: 'Inter', fontSize: 14, color: Color.fromRGBO(61, 186, 40, 1), fontWeight: FontWeight.w500);
+TextStyle blue=TextStyle( fontFamily: 'Inter', fontSize: 14, color: Color.fromRGBO(0, 160, 226, 1), fontWeight: FontWeight.w500);
+TextStyle red=TextStyle( fontFamily: 'Inter', fontSize: 16, color: Color.fromRGBO(255, 0, 13, 1), fontWeight: FontWeight.w700);
 
 
 
