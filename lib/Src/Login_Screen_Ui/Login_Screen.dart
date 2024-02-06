@@ -62,6 +62,7 @@ class _Login_ScreenState extends State<Login_Screen> {
             child: ImgPathPng('logo.png')),
         Container(
             width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height/1.5,
           decoration: BoxDecoration(
             color: white2,
             borderRadius: BorderRadius.only(
@@ -78,7 +79,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                 Text("Sign in to start your session",style: logintxt,),
                   SizedBox(height: 20,),
                   //EMPLOYEE ID
-                  textFormField(
+                  textFormField2(
                     // isEnabled: false,
                       hintText: "Employee Id",
                       keyboardtype: TextInputType.phone,
@@ -120,7 +121,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                   SizedBox(height: 50,),
                   //BUTTON
                   Container(
-                      margin: EdgeInsets.only(bottom: 150,left: 20,right: 20),
+                      margin: EdgeInsets.only(left: 30,right: 30),
                       child: CommonElevatedButton(context, 'Sign In', () {
                         if(_formKey.currentState!.validate()){
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>Home_Dashboard_Screen()));

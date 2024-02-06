@@ -14,15 +14,18 @@ Widget CommonElevatedButton(
 ){
   return ElevatedButton(
     style: ElevatedButton.styleFrom(
-      backgroundColor: blue1,
+      backgroundColor: blue3,
       minimumSize: Size(double.infinity, 50),
       elevation: 9,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     ),
     onPressed: onPress,
-    child: Text(
-      titleName,
-      style: ButtonT,
+    child: Padding(
+      padding: const EdgeInsets.all(10),
+      child: Text(
+        titleName,
+        style: ButtonT,textAlign: TextAlign.center,
+      ),
     ),
   );
 }

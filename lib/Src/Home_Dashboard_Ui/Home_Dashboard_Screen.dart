@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vcpl/Src/Common_Widgets/Common_Pop_Up.dart';
 import 'package:vcpl/Src/Utilits/Common_Colors.dart';
 import 'package:vcpl/Src/Utilits/Image_Path.dart';
 import 'package:vcpl/Src/Utilits/Text_Style.dart';
@@ -41,9 +42,21 @@ class _Home_Dashboard_ScreenState extends State<Home_Dashboard_Screen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _DashBoardCard(context, cardTitle: 'Cement Transactions', cardImg: 'payment.svg'),
+                  InkWell(
+                    onTap: (){
+                      showDialog(context: context, builder: (BuildContext context) {
+                        return Cement_Pop_Up(context);
+                      }, );
+                    },
+                      child: _DashBoardCard(context, cardTitle: 'Cement Transactions', cardImg: 'payment.svg')),
                   const Spacer(),
-                  _DashBoardCard(context, cardTitle: 'Labours Assigning', cardImg: 'Document.svg'),
+                  InkWell(
+                      onTap: (){
+                        showDialog(context: context, builder: (BuildContext context) {
+                          return Labour_Pop_Up(context);
+                        }, );
+                      },
+                      child: _DashBoardCard(context, cardTitle: 'Labours Assigning', cardImg: 'Document.svg')),
                 ],
               ),
             ),
@@ -52,9 +65,21 @@ class _Home_Dashboard_ScreenState extends State<Home_Dashboard_Screen> {
               padding: const EdgeInsets.only(bottom: 20),
               child: Row(
                 children: [
-                  _DashBoardCard(context, cardTitle: 'Centering Transaction', cardImg: 'Document.svg'),
+                  InkWell(
+                      onTap: (){
+                        showDialog(context: context, builder: (BuildContext context) {
+                          return Centering_Pop_Up(context);
+                        }, );
+                      },
+                      child: _DashBoardCard(context, cardTitle: 'Centering Transaction', cardImg: 'Document.svg')),
                   const Spacer(),
-                  _DashBoardCard(context, cardTitle: 'Tools&Plants Transaction', cardImg: 'Document.svg'),
+                  InkWell(
+                      onTap: (){
+                        showDialog(context: context, builder: (BuildContext context) {
+                          return Tools_Pop_Up(context);
+                        }, );
+                      },
+                      child: _DashBoardCard(context, cardTitle: 'Tools&Plants Transaction', cardImg: 'Document.svg')),
                 ],
               ),
             ),
@@ -63,9 +88,21 @@ class _Home_Dashboard_ScreenState extends State<Home_Dashboard_Screen> {
               padding: const EdgeInsets.only(bottom: 20),
               child: Row(
                 children: [
-                  _DashBoardCard(context, cardTitle: 'Lorry Transactions', cardImg: 'Document.svg'),
+                  InkWell(
+                      onTap: (){
+                        showDialog(context: context, builder: (BuildContext context) {
+                          return Lorry_Pop_Up(context);
+                        }, );
+                      },
+                      child: _DashBoardCard(context, cardTitle: 'Lorry Transactions', cardImg: 'Document.svg')),
                   const Spacer(),
-                  _DashBoardCard(context, cardTitle: 'Shop Transactions', cardImg: 'Document.svg'),
+                  InkWell(
+                      onTap: (){
+                        showDialog(context: context, builder: (BuildContext context) {
+                          return Shop_Pop_Up(context);
+                        }, );
+                      },
+                      child: _DashBoardCard(context, cardTitle: 'Shop Transactions', cardImg: 'Document.svg')),
                 ],
               ),
             ),
@@ -95,15 +132,15 @@ Widget _DashBoardCard(context,{ required String cardTitle, required String cardI
             Padding(
               padding: const EdgeInsets.only(top: 15,bottom: 15),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Center(child: Icon(Icons.shopping_cart_rounded,color: blue3,size: 45,)),
                   SizedBox(height: 5,),
                   //CARD TITLE
                   Container(
                     width: 100,
-                    child: Text(cardTitle,style: cardT,maxLines: 2,),
+                    child: Text(cardTitle,style: cardT,maxLines: 2,textAlign: TextAlign.center,),
                   ),
                 ],
               ),

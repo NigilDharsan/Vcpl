@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
 
+import 'Src/Add_Transaction_Ui/Add_Cement_Transaction_Screen.dart';
+import 'Src/Add_Transaction_Ui/Add_Centering_Transactions_Screen.dart';
+import 'Src/Add_Transaction_Ui/Add_Labours_Assigning_Screen.dart';
+import 'Src/Add_Transaction_Ui/Add_Lorry_Transaction_Screen.dart';
+import 'Src/Add_Transaction_Ui/Add_Shop_Transactions_Screen.dart';
+import 'Src/Add_Transaction_Ui/Add_ToolsandPlants_Transactions_Screen.dart';
 import 'Src/Home_Dashboard_Ui/Home_Dashboard_Screen.dart';
 import 'Src/Login_Screen_Ui/Login_Screen.dart';
+import 'Src/Transaction_History_Ui/Centering_Transaction_Screen.dart';
+import 'Src/Transaction_History_Ui/Lorry_Transaction_Screen.dart';
+import 'Src/Transaction_History_Ui/Shop_Transaction_Screen.dart';
+import 'Src/Transaction_History_Ui/Tools_And_Plant_Transaction_Screen.dart';
 
 void main() {
   runApp(const MyApp());

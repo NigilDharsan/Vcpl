@@ -63,12 +63,7 @@ Widget textFormField2(
           contentPadding:
           EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
           hintText: hintText,
-          hintStyle: TextStyle(
-            fontFamily: "Inter",
-            fontWeight: FontWeight.w400,
-            fontSize: 12.0,
-            color: Colors.grey,
-          ),
+          hintStyle: phoneHT,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(5),
             borderSide: BorderSide(color: white1),
@@ -157,10 +152,10 @@ Widget textFieldPassword(
         hintStyle: phoneHT,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
-          borderSide: BorderSide(color: black2),
+          borderSide: BorderSide(color: white1),
         ),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: black2),
+          borderSide: BorderSide(color: white1),
           borderRadius: BorderRadius.circular(5)
         ),
         suffixIcon: IconButton(
@@ -169,7 +164,7 @@ Widget textFieldPassword(
               : Icons.lock_open,color: black1,),
           onPressed: onPressed,
         ),
-        fillColor: white2,
+        fillColor: white1,
         filled: true,
       ),
       onChanged: onChanged,
