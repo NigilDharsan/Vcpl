@@ -1,21 +1,27 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vcpl/Src/Common_Widgets/Common_Button.dart';
 import 'package:vcpl/Src/Common_Widgets/Text_Form_Field.dart';
 import 'package:vcpl/Src/Home_Dashboard_Ui/Home_Dashboard_Screen.dart';
+import 'package:vcpl/Src/Models/LoginModel.dart';
+import 'package:vcpl/Src/Utilits/ApiService.dart';
 import 'package:vcpl/Src/Utilits/Common_Colors.dart';
+import 'package:vcpl/Src/Utilits/ConstantsApi.dart';
+import 'package:vcpl/Src/Utilits/Generic.dart';
 import 'package:vcpl/Src/Utilits/Image_Path.dart';
+import 'package:vcpl/Src/Utilits/Loading_Overlay.dart';
 import 'package:vcpl/Src/Utilits/Text_Style.dart';
 
-
-class Login_Screen extends StatefulWidget {
+class Login_Screen extends ConsumerStatefulWidget {
   Login_Screen({super.key});
 
   @override
-  State<Login_Screen> createState() => _Login_ScreenState();
+  ConsumerState<Login_Screen> createState() => _Login_ScreenState();
 }
 
-class _Login_ScreenState extends State<Login_Screen> {
+class _Login_ScreenState extends ConsumerState<Login_Screen> {
   TextEditingController _employeeId = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -27,6 +33,15 @@ class _Login_ScreenState extends State<Login_Screen> {
     setState(() {
       _obscurePassword = !_obscurePassword;
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _employeeId.text = "9940820461";
+    _passwordController.text = "password";
+    _password = "password";
   }
 
   @override
@@ -48,7 +63,8 @@ class _Login_ScreenState extends State<Login_Screen> {
       ),
     );
   }
-  Widget _mainBody(){
+
+  Widget _mainBody() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       // crossAxisAlignment: CrossAxisAlignment.center,
@@ -62,46 +78,51 @@ class _Login_ScreenState extends State<Login_Screen> {
             child: ImgPathPng('logo.png')),
         Container(
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height/1.5,
-          decoration: BoxDecoration(
-            color: white2,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(25),
-              topRight: Radius.circular(25),
+            height: MediaQuery.of(context).size.height / 1.5,
+            decoration: BoxDecoration(
+              color: white2,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(25),
+                topRight: Radius.circular(25),
+              ),
             ),
-          ),
             alignment: Alignment.topLeft,
             child: Padding(
-              padding: const EdgeInsets.only(left: 20,right: 20,top: 25),
+              padding: const EdgeInsets.only(left: 20, right: 20, top: 25),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                Text("Sign in to start your session",style: logintxt,),
-                  SizedBox(height: 20,),
+                  Text(
+                    "Sign in to start your session",
+                    style: logintxt,
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
                   //EMPLOYEE ID
                   textFormField2(
-                    // isEnabled: false,
+                      // isEnabled: false,
                       hintText: "Employee Id",
                       keyboardtype: TextInputType.phone,
                       Controller: _employeeId,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly],
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       onChanged: null,
-                      validating:(value){
+                      validating: (value) {
                         if (value!.isEmpty) {
                           return 'Please enter a valid Employee Id';
-                        } else if (value==null) {
+                        } else if (value == null) {
                           return 'Please enter a valid Employee Id';
                         }
                         return null;
-                      }
+                      }),
+                  const SizedBox(
+                    height: 25,
                   ),
-                  const SizedBox(height: 25,),
                   //PASSWORD
                   textFieldPassword(
                     Controller: _passwordController,
                     obscure: _obscurePassword,
-                    onPressed:_togglePasswordVisibility,
+                    onPressed: _togglePasswordVisibility,
                     hintText: "Password",
                     keyboardtype: TextInputType.text,
                     onChanged: (value) {
@@ -109,7 +130,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                         _password = value;
                       });
                     },
-                    validating:(value) {
+                    validating: (value) {
                       if (value!.isEmpty) {
                         return 'Please enter a password';
                       } else if (value.length < 6) {
@@ -118,20 +139,45 @@ class _Login_ScreenState extends State<Login_Screen> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 50,),
+                  SizedBox(
+                    height: 50,
+                  ),
                   //BUTTON
                   Container(
-                      margin: EdgeInsets.only(left: 30,right: 30),
-                      child: CommonElevatedButton(context, 'Sign In', () {
-                        if(_formKey.currentState!.validate()){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>Home_Dashboard_Screen()));
+                      margin: EdgeInsets.only(left: 30, right: 30),
+                      child: CommonElevatedButton(context, 'Sign In', () async {
+                        if (_formKey.currentState!.validate()) {
+                          LoadingOverlay.show(context);
+
+                          final apiService = ApiService(ref.read(dioProvider));
+
+                          var formData = FormData.fromMap({
+                            "mobile": _employeeId.text,
+                            "password": _password
+                          });
+                          final postResponse =
+                              await apiService.login<LoginModel>(
+                                  ConstantApi.loginUrl, formData);
+                          await LoadingOverlay.hide();
+
+                          if (postResponse.success == true) {
+                            ShowToastMessage(postResponse.message ?? "");
+                            accessToken(postResponse.data?.token ?? "");
+                            userID(postResponse.data?.userId ?? 0);
+
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        Home_Dashboard_Screen()));
+                          } else {
+                            ShowToastMessage(postResponse.data?.error ?? "");
+                          }
                         }
                       }))
                 ],
               ),
-            )
-        ),
-
+            )),
       ],
     );
   }

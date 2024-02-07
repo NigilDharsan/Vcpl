@@ -10,8 +10,8 @@ TextStyle notificationTitle=TextStyle( fontFamily: 'Nunito', fontSize: 16, color
 TextStyle ProuctT=TextStyle( fontFamily: 'Roboto', fontSize: 20, color: Color.fromRGBO(52, 52, 52, 1), fontWeight: FontWeight.w700);
 TextStyle ProductPriceT=TextStyle( fontFamily: 'Roboto', fontSize: 18, color: Color.fromRGBO(52, 52, 52, 1), fontWeight: FontWeight.w500);
 TextStyle phoneHT=TextStyle( fontFamily: 'Roboto', fontSize: 18, color: Color.fromRGBO(140, 140, 140, 1), fontWeight: FontWeight.w400);
-TextStyle Textfield_Style=TextStyle( fontFamily: 'Inter', fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500);
-TextStyle Textfield_Style2=TextStyle( fontFamily: 'Inter', fontSize: 16, color: Colors.black, fontWeight: FontWeight.w600);
+TextStyle Textfield_Style=TextStyle( fontFamily: 'Inter', fontSize: 14, color: Colors.black, fontWeight: FontWeight.w400);
+TextStyle Textfield_Style2=TextStyle( fontFamily: 'Inter', fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500);
 TextStyle StarT=TextStyle(color: Colors.red,fontSize: 25);
 
 TextStyle discountT=TextStyle( fontFamily: 'Inter', fontSize: 14, color: green7, fontWeight: FontWeight.w500);
@@ -82,8 +82,8 @@ TextStyle TaskT1=TextStyle( fontFamily: 'Inter', fontSize: 14, color:blue3, font
 TextStyle TaskT2=TextStyle( fontFamily: 'Inter', fontSize: 20, color:blue3, fontWeight: FontWeight.w700,);
 TextStyle offerT=TextStyle( fontFamily: 'Inter', fontSize: 14, color:grey1, fontWeight: FontWeight.w600,);
 
-TextStyle green=TextStyle( fontFamily: 'Inter', fontSize: 14, color: Color.fromRGBO(61, 186, 40, 1), fontWeight: FontWeight.w700);
-TextStyle blue=TextStyle( fontFamily: 'Inter', fontSize: 14, color: Color.fromRGBO(0, 160, 226, 1), fontWeight: FontWeight.w700);
+TextStyle green=TextStyle( fontFamily: 'Inter', fontSize: 14, color: Color.fromRGBO(61, 186, 40, 1), fontWeight: FontWeight.w500);
+TextStyle blue=TextStyle( fontFamily: 'Inter', fontSize: 14, color: Color.fromRGBO(0, 160, 226, 1), fontWeight: FontWeight.w500);
 TextStyle red=TextStyle( fontFamily: 'Inter', fontSize: 16, color: Color.fromRGBO(255, 0, 13, 1), fontWeight: FontWeight.w700);
 
 

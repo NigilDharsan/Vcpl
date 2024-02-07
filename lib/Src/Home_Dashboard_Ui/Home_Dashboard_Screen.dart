@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vcpl/Src/Common_Widgets/Common_Pop_Up.dart';
 import 'package:vcpl/Src/Utilits/Common_Colors.dart';
-import 'package:vcpl/Src/Utilits/Image_Path.dart';
 import 'package:vcpl/Src/Utilits/Text_Style.dart';
 
 import '../Common_Widgets/Custom_App_Bar.dart';
@@ -18,45 +17,65 @@ class _Home_Dashboard_ScreenState extends State<Home_Dashboard_Screen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: white3,
-      appBar: Custom_AppBar(title: 'Dashboard', actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 20),
-          child: CircleAvatar(
-            radius: 15,
-            backgroundColor: grey3,
-            child: Icon(Icons.person,size: 20,),
+      appBar: Custom_AppBar(
+        title: 'Dashboard',
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: CircleAvatar(
+              radius: 15,
+              backgroundColor: grey3,
+              child: Icon(
+                Icons.person,
+                size: 20,
+              ),
+            ),
           ),
-        ),
-      ],isNav: null, isBlue: true,),
+        ],
+        isNav: null,
+        isBlue: true,
+      ),
       body: Padding(
-        padding: const EdgeInsets.only(left: 20,right: 20),
+        padding: const EdgeInsets.only(left: 20, right: 20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 25,),
+            SizedBox(
+              height: 25,
+            ),
             //Cement Transactions && Labours Assigning
             Padding(
-              padding: const EdgeInsets.only(bottom: 20,top: 20),
+              padding: const EdgeInsets.only(bottom: 20, top: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   InkWell(
-                    onTap: (){
-                      showDialog(context: context, builder: (BuildContext context) {
-                        return Cement_Pop_Up(context);
-                      }, );
-                    },
-                      child: _DashBoardCard(context, cardTitle: 'Cement Transactions', cardImg: 'payment.svg')),
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Cement_Pop_Up(context);
+                          },
+                        );
+                      },
+                      child: _DashBoardCard(context,
+                          cardTitle: 'Cement Transactions',
+                          cardImg: 'payment.svg')),
                   const Spacer(),
                   InkWell(
-                      onTap: (){
-                        showDialog(context: context, builder: (BuildContext context) {
-                          return Labour_Pop_Up(context);
-                        }, );
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Labour_Pop_Up(context);
+                          },
+                        );
                       },
-                      child: _DashBoardCard(context, cardTitle: 'Labours Assigning', cardImg: 'Document.svg')),
+                      child: _DashBoardCard(context,
+                          cardTitle: 'Labours Assigning',
+                          cardImg: 'Document.svg')),
                 ],
               ),
             ),
@@ -66,20 +85,30 @@ class _Home_Dashboard_ScreenState extends State<Home_Dashboard_Screen> {
               child: Row(
                 children: [
                   InkWell(
-                      onTap: (){
-                        showDialog(context: context, builder: (BuildContext context) {
-                          return Centering_Pop_Up(context);
-                        }, );
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Centering_Pop_Up(context);
+                          },
+                        );
                       },
-                      child: _DashBoardCard(context, cardTitle: 'Centering Transaction', cardImg: 'Document.svg')),
+                      child: _DashBoardCard(context,
+                          cardTitle: 'Centering Transaction',
+                          cardImg: 'Document.svg')),
                   const Spacer(),
                   InkWell(
-                      onTap: (){
-                        showDialog(context: context, builder: (BuildContext context) {
-                          return Tools_Pop_Up(context);
-                        }, );
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Tools_Pop_Up(context);
+                          },
+                        );
                       },
-                      child: _DashBoardCard(context, cardTitle: 'Tools&Plants Transaction', cardImg: 'Document.svg')),
+                      child: _DashBoardCard(context,
+                          cardTitle: 'Tools&Plants Transaction',
+                          cardImg: 'Document.svg')),
                 ],
               ),
             ),
@@ -89,20 +118,30 @@ class _Home_Dashboard_ScreenState extends State<Home_Dashboard_Screen> {
               child: Row(
                 children: [
                   InkWell(
-                      onTap: (){
-                        showDialog(context: context, builder: (BuildContext context) {
-                          return Lorry_Pop_Up(context);
-                        }, );
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Lorry_Pop_Up(context);
+                          },
+                        );
                       },
-                      child: _DashBoardCard(context, cardTitle: 'Lorry Transactions', cardImg: 'Document.svg')),
+                      child: _DashBoardCard(context,
+                          cardTitle: 'Lorry Transactions',
+                          cardImg: 'Document.svg')),
                   const Spacer(),
                   InkWell(
-                      onTap: (){
-                        showDialog(context: context, builder: (BuildContext context) {
-                          return Shop_Pop_Up(context);
-                        }, );
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Shop_Pop_Up(context);
+                          },
+                        );
                       },
-                      child: _DashBoardCard(context, cardTitle: 'Shop Transactions', cardImg: 'Document.svg')),
+                      child: _DashBoardCard(context,
+                          cardTitle: 'Shop Transactions',
+                          cardImg: 'Document.svg')),
                 ],
               ),
             ),
@@ -113,39 +152,51 @@ class _Home_Dashboard_ScreenState extends State<Home_Dashboard_Screen> {
   }
 }
 
-Widget _DashBoardCard(context,{ required String cardTitle, required String cardImg}){
-  return  Card(
+Widget _DashBoardCard(context,
+    {required String cardTitle, required String cardImg}) {
+  return Card(
     elevation: 5,
     child: Container(
-      width:MediaQuery.of(context).size.width/2.5,
+      width: MediaQuery.of(context).size.width / 2.5,
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          color: white1,
+        borderRadius: BorderRadius.circular(5),
+        color: white1,
       ),
       child: Padding(
-        padding: const EdgeInsets.only(left: 15,right: 15),
+        padding: const EdgeInsets.only(left: 15, right: 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             //COUNT
             Padding(
-              padding: const EdgeInsets.only(top: 15,bottom: 15),
+              padding: const EdgeInsets.only(top: 15, bottom: 15),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Center(child: Icon(Icons.shopping_cart_rounded,color: blue3,size: 45,)),
-                  SizedBox(height: 5,),
+                  Center(
+                      child: Icon(
+                    Icons.shopping_cart_rounded,
+                    color: blue3,
+                    size: 45,
+                  )),
+                  SizedBox(
+                    height: 5,
+                  ),
                   //CARD TITLE
                   Container(
-                    width: 100,
-                    child: Text(cardTitle,style: cardT,maxLines: 2,textAlign: TextAlign.center,),
+                    width: 120,
+                    child: Text(
+                      cardTitle,
+                      style: cardT,
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ],
               ),
             ),
-
           ],
         ),
       ),
