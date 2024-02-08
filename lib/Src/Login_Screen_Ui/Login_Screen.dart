@@ -39,9 +39,9 @@ class _Login_ScreenState extends ConsumerState<Login_Screen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _employeeId.text = "9940820461";
-    _passwordController.text = "password";
-    _password = "password";
+    // _employeeId.text = "9940820461";
+    // _passwordController.text = "password";
+    // _password = "password";
   }
 
   @override
@@ -168,8 +168,8 @@ class _Login_ScreenState extends ConsumerState<Login_Screen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        Home_Dashboard_Screen()));
+                                    builder: (context) => Home_Dashboard_Screen(
+                                        postResponse.data?.permissions ?? [])));
                           } else {
                             ShowToastMessage(postResponse.data?.error ?? "");
                           }

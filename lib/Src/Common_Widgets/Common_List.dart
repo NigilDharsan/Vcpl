@@ -179,7 +179,7 @@ Widget Common_Transaction(context,
                     style: cardDetailT,
                   ),
                   Container(
-                      width: MediaQuery.of(context).size.width /2.4,
+                      width: MediaQuery.of(context).size.width / 2.4,
                       child: Text(
                         MaterialName,
                         style: DateT,
@@ -239,8 +239,10 @@ Widget Common_Transaction(context,
 }
 
 //PENDING TRANSACTION
-Widget Pending_Transaction(context,
-    {required String isTag,}) {
+Widget Pending_Transaction(
+  context, {
+  required String isTag,
+}) {
   Color? containerColor;
   TextStyle? style;
   switch (isTag) {
@@ -266,7 +268,7 @@ Widget Pending_Transaction(context,
       bottom: 20,
     ),
     decoration:
-    BoxDecoration(borderRadius: BorderRadius.circular(10), color: white3),
+        BoxDecoration(borderRadius: BorderRadius.circular(10), color: white3),
     child: Padding(
       padding: const EdgeInsets.only(left: 10, right: 10),
       child: Column(
@@ -294,7 +296,7 @@ Widget Pending_Transaction(context,
               child: Row(
                 children: [
                   Text(
-                    'Transaction : ',
+                    'Site Name : ',
                     style: cardDetailT,
                   ),
                   Text(
@@ -315,29 +317,31 @@ Widget Pending_Transaction(context,
                 ),
                 Center(
                     child: Text(
-                      '24',
-                      style: TBlack,
-                    )),
+                  '24',
+                  style: TBlack,
+                )),
                 const Spacer(),
                 Container(
                     alignment: Alignment.topLeft,
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: green1),
+                        borderRadius: BorderRadius.circular(5), color: blue1),
                     child: Padding(
-                      padding: const EdgeInsets.all(5),
-                      child:Icon(Icons.add,color: white1,)
-                    )),
+                        padding: const EdgeInsets.all(5),
+                        child: Icon(
+                          Icons.check,
+                          color: white1,
+                        ))),
                 Container(
-                  margin: EdgeInsets.only(left: 10),
+                    margin: EdgeInsets.only(left: 10),
                     alignment: Alignment.topLeft,
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: red1),
+                        borderRadius: BorderRadius.circular(5), color: red1),
                     child: Padding(
-                      padding: const EdgeInsets.all(5),
-                      child:Icon(Icons.cancel_outlined,color: white1,)
-                    )),
+                        padding: const EdgeInsets.all(5),
+                        child: Icon(
+                          Icons.close,
+                          color: white1,
+                        ))),
               ],
             ),
           ),

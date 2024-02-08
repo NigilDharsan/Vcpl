@@ -7,7 +7,7 @@ class CommonListModel {
 
   CommonListModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    if (json['data'] != null) {
+    if (json['data'] != null && json['data'] != []) {
       data = <ListData>[];
       json['data'].forEach((v) {
         data!.add(new ListData.fromJson(v));

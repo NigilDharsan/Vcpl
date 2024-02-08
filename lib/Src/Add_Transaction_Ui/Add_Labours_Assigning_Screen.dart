@@ -9,6 +9,7 @@ import 'package:vcpl/Src/Models/CommonModel.dart';
 import 'package:vcpl/Src/Utilits/ApiService.dart';
 import 'package:vcpl/Src/Utilits/Common_Colors.dart';
 import 'package:vcpl/Src/Utilits/ConstantsApi.dart';
+import 'package:vcpl/Src/Utilits/Generic.dart';
 import 'package:vcpl/Src/Utilits/Image_Path.dart';
 import 'package:vcpl/Src/Utilits/Loading_Overlay.dart';
 import 'package:vcpl/Src/utilits/Text_Style.dart';
@@ -38,7 +39,7 @@ class _Add_Labours_Assigning_ScreenState
     });
   }
 
-  String? site_id;
+  String? site_id = "";
 
   String? selectSite;
   List<String> selectSiteOption = [
@@ -52,17 +53,14 @@ class _Add_Labours_Assigning_ScreenState
     "EPPINGER",
     "SARAYU SCHOOL",
   ];
-  String? subContractor_id;
+  String? subContractor_id = "";
 
   String? subContractor;
-  List<String> subContractorOption = [
-    "MANI",
-    "PALPANDI",
-    "ANBU",
-    "SANJIVI",
-  ];
+  List<String> subContractorOption = [];
 
   String? shift;
+  String? shift_id = "";
+
   List<String> shiftOption = [
     "6AM-9AM",
     "9AM-6PM",
@@ -78,8 +76,8 @@ class _Add_Labours_Assigning_ScreenState
 
     selectSiteOption =
         widget.siteListData.map((e) => e.siteName ?? "").toList();
-    subContractorOption =
-        widget.siteListData.map((e) => e.subContractor ?? "").toList();
+    // subContractorOption =
+    //     widget.siteListData.map((e) => e.subContractor ?? "").toList();
 
     getLabourList();
   }
@@ -107,7 +105,12 @@ class _Add_Labours_Assigning_ScreenState
     final postResponse =
         await apiService.post<CommonModel>(ConstantApi.assignLabour, formData);
     LoadingOverlay.hide();
-    if (postResponse.success == true) {}
+    if (postResponse.success == true) {
+      ShowToastMessage(postResponse.message ?? "");
+      Navigator.pop(context);
+    } else {
+      ShowToastMessage(postResponse.message ?? "");
+    }
   }
 
   @override
@@ -138,6 +141,10 @@ class _Add_Labours_Assigning_ScreenState
                     ListData result = widget.siteListData
                         .firstWhere((value) => value.siteName == newValue);
                     site_id = '${result.id ?? 0}';
+
+                    subContractorOption.add(result.subContractor ?? "");
+                    subContractor = result.subContractor ?? "";
+                    subContractor_id = '${result.subContractorId ?? 0}';
                   });
                 },
                 hint: 'Select Site',
@@ -168,6 +175,7 @@ class _Add_Labours_Assigning_ScreenState
                 onChanged: (String? newValue) {
                   setState(() {
                     shift = newValue;
+                    shift_id = newValue;
                   });
                 },
                 hint: 'Select',
@@ -198,27 +206,33 @@ class _Add_Labours_Assigning_ScreenState
                 padding: const EdgeInsets.only(
                     top: 50, bottom: 50, left: 30, right: 30),
                 child: CommonElevatedButton(context, 'Submit', () {
-                  var formData = FormData.fromMap({
-                    "site_id": 4,
-                    "sub_contractor_id": 113,
-                    "shift_id": shift == "6AM-9AM"
-                        ? 1
-                        : shift == "9AM-6PM"
-                            ? 2
-                            : shift == "After 7PM"
-                                ? 3
-                                : 1
-                  });
+                  if (site_id == "") {
+                    ShowToastMessage("Choose Site Name");
+                  } else if (shift_id == "") {
+                    ShowToastMessage("Choose shift time");
+                  } else {
+                    var formData = FormData.fromMap({
+                      "site_id": site_id,
+                      "sub_contractor_id": 113,
+                      "shift_id": shift == "6AM-9AM"
+                          ? 1
+                          : shift == "9AM-6PM"
+                              ? 2
+                              : shift == "After 7PM"
+                                  ? 3
+                                  : 1
+                    });
 
-                  for (int i = 0; i < 5; i++) {
-                    var obj = laboursCategoryList[i].labourCount;
-                    if (obj > 0) {
-                      formData.fields
-                          .add(MapEntry('labours_count[$i][labours]', '$obj'));
+                    for (int i = 0; i < 5; i++) {
+                      var obj = laboursCategoryList[i].labourCount;
+                      if (obj > 0) {
+                        formData.fields.add(
+                            MapEntry('labours_count[$i][labours]', '$obj'));
+                      }
                     }
-                  }
 
-                  assignLabours(formData);
+                    assignLabours(formData);
+                  }
                 }),
               ),
             ],

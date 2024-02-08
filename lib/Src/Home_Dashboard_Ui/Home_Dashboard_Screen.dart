@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vcpl/Src/Common_Widgets/Common_Pop_Up.dart';
 import 'package:vcpl/Src/Models/CommonListModel.dart';
+import 'package:vcpl/Src/Models/LoginModel.dart';
 import 'package:vcpl/Src/Models/VehicleModel.dart';
-import 'package:vcpl/Src/Transaction_History_Ui/Centering_Transaction_Screen.dart';
 import 'package:vcpl/Src/Utilits/ApiService.dart';
 import 'package:vcpl/Src/Utilits/Common_Colors.dart';
 import 'package:vcpl/Src/Utilits/ConstantsApi.dart';
@@ -15,7 +15,9 @@ import 'package:vcpl/Src/Utilits/Text_Style.dart';
 import '../Common_Widgets/Custom_App_Bar.dart';
 
 class Home_Dashboard_Screen extends ConsumerStatefulWidget {
-  const Home_Dashboard_Screen({super.key});
+  List<Permissions>? permissionsList;
+
+  Home_Dashboard_Screen(this.permissionsList, {super.key});
 
   @override
   ConsumerState<Home_Dashboard_Screen> createState() =>
@@ -63,7 +65,7 @@ class _Home_Dashboard_ScreenState extends ConsumerState<Home_Dashboard_Screen> {
     final apiService = ApiService(ref.read(dioProvider));
 
     final postResponse =
-    await apiService.post1<CommonListModel>(ConstantApi.siteListUrl);
+        await apiService.post1<CommonListModel>(ConstantApi.siteListUrl);
     if (postResponse.success == true) {
       setState(() {
         siteListData = postResponse.data!;
@@ -75,7 +77,7 @@ class _Home_Dashboard_ScreenState extends ConsumerState<Home_Dashboard_Screen> {
     final apiService = ApiService(ref.read(dioProvider));
 
     final postResponse =
-    await apiService.post1<VehicleModel>(ConstantApi.vehicleListUrl);
+        await apiService.post1<VehicleModel>(ConstantApi.vehicleListUrl);
     if (postResponse.success == true) {
       setState(() {
         vechileNumberOtion = postResponse.data!;
@@ -119,7 +121,8 @@ class _Home_Dashboard_ScreenState extends ConsumerState<Home_Dashboard_Screen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 35),
-                  child: DashBoard_List(sitenameData,siteListData,vechileNumberOtion),
+                  child: DashBoard_List(widget.permissionsList ?? [],
+                      sitenameData, siteListData, vechileNumberOtion),
                 ),
                 // //Cement Transactions && Labours Assigning
                 // Padding(
@@ -234,34 +237,81 @@ class _Home_Dashboard_ScreenState extends ConsumerState<Home_Dashboard_Screen> {
     );
   }
 }
-Widget DashBoard_List(List<ListData> sitenameData, List<ListData> siteListData, List<VehicleData> vechileNumberOtion){
+
+Widget DashBoard_List(
+    List<Permissions> permissionsList,
+    List<ListData> sitenameData,
+    List<ListData> siteListData,
+    List<VehicleData> vechileNumberOtion) {
   return Container(
-    child: ListView.builder(
-      itemCount: 7,
+    child: GridView.builder(
+      itemCount: permissionsList.length,
       shrinkWrap: true,
       scrollDirection: Axis.vertical,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (BuildContext context, int index) {
-        return  Padding(
+        return Padding(
           padding: const EdgeInsets.only(bottom: 15),
           child: InkWell(
               onTap: () {
-                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return Shop_Pop_Up(context, sitenameData);
-                                  },
-                                );
+                if (permissionsList[index].name == "Cement Transactions") {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Cement_Pop_Up(context, sitenameData, siteListData,
+                          vechileNumberOtion);
+                    },
+                  );
+                } else if (permissionsList[index].name ==
+                    "Centering Transactions") {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Centering_Pop_Up(context, sitenameData,
+                          siteListData, vechileNumberOtion);
+                    },
+                  );
+                } else if (permissionsList[index].name ==
+                    "ToolsandPlants Transactions") {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Tools_Pop_Up(context, sitenameData, siteListData,
+                          vechileNumberOtion);
+                    },
+                  );
+                } else if (permissionsList[index].name ==
+                    "Lorry Transactions") {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Lorry_Pop_Up(context, sitenameData, siteListData,
+                          vechileNumberOtion);
+                    },
+                  );
+                } else if (permissionsList[index].name == "Labours Assigning") {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Labour_Pop_Up(context, siteListData);
+                      });
+                } else {}
               },
               child: _DashBoardCard(context,
-                  cardTitle: 'Cement Transactions',
-                  cardImg: 'payment.svg')),
+                  cardData: permissionsList[index], cardImg: 'payment.svg')),
         );
-      },),
+      },
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 4.0,
+        mainAxisSpacing: 4.0,
+      ),
+    ),
   );
 }
+
 Widget _DashBoardCard(context,
-    {required String cardTitle, required String cardImg}) {
+    {required Permissions cardData, required String cardImg}) {
   return Card(
     elevation: 5,
     child: Container(
@@ -273,8 +323,8 @@ Widget _DashBoardCard(context,
       child: Padding(
         padding: const EdgeInsets.only(left: 15, right: 15),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             //COUNT
             Padding(
@@ -285,18 +335,18 @@ Widget _DashBoardCard(context,
                 children: [
                   Center(
                       child: Icon(
-                        Icons.shopping_cart_rounded,
-                        color: blue3,
-                        size: 45,
-                      )),
+                    Icons.shopping_cart_rounded,
+                    color: blue3,
+                    size: 45,
+                  )),
                   SizedBox(
                     height: 5,
                   ),
                   //CARD TITLE
                   Container(
-                    width: 120,
+                    width: 150,
                     child: Text(
-                      cardTitle,
+                      cardData.name ?? "",
                       style: cardT,
                       maxLines: 2,
                       textAlign: TextAlign.center,
