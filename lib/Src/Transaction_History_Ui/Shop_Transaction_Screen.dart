@@ -47,7 +47,7 @@ class _Shop_Transaction_ScreenState
       appBar: Custom_AppBar(
         title: 'Shop Transactions',
         actions: null,
-        isNav: null,
+        isNav: true,
         isBlue: true,
       ),
       body: SingleChildScrollView(
@@ -58,7 +58,7 @@ class _Shop_Transaction_ScreenState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(
-                height: 25,
+                height: 15,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,

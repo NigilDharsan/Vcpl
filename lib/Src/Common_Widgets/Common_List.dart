@@ -179,7 +179,7 @@ Widget Common_Transaction(context,
                     style: cardDetailT,
                   ),
                   Container(
-                      width: MediaQuery.of(context).size.width / 2,
+                      width: MediaQuery.of(context).size.width /2.4,
                       child: Text(
                         MaterialName,
                         style: DateT,
@@ -228,6 +228,115 @@ Widget Common_Transaction(context,
                         isTag,
                         style: style,
                       ),
+                    )),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+//PENDING TRANSACTION
+Widget Pending_Transaction(context,
+    {required String isTag,}) {
+  Color? containerColor;
+  TextStyle? style;
+  switch (isTag) {
+    case "Issued":
+      containerColor = pink3;
+      style = red;
+      break;
+    case "Transfer":
+      containerColor = blue2;
+      style = blue;
+      break;
+    case "Received":
+      containerColor = green3;
+      style = green;
+      break;
+    default:
+      containerColor = Colors.white;
+      break;
+  }
+  return Container(
+    width: MediaQuery.of(context).size.width,
+    margin: EdgeInsets.only(
+      bottom: 20,
+    ),
+    decoration:
+    BoxDecoration(borderRadius: BorderRadius.circular(10), color: white3),
+    child: Padding(
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+              margin: EdgeInsets.only(top: 15, bottom: 20),
+              alignment: Alignment.topLeft,
+              child: Row(
+                children: [
+                  Text(
+                    'Date : ',
+                    style: cardDetailT,
+                  ),
+                  Text(
+                    '10/12/2024',
+                    style: DateT,
+                  ),
+                ],
+              )),
+          Container(
+              margin: EdgeInsets.only(bottom: 20),
+              alignment: Alignment.topLeft,
+              child: Row(
+                children: [
+                  Text(
+                    'Transaction : ',
+                    style: cardDetailT,
+                  ),
+                  Text(
+                    'Cement',
+                    style: DateT,
+                  ),
+                ],
+              )),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Quantity : ',
+                  style: cardDetailT,
+                ),
+                Center(
+                    child: Text(
+                      '24',
+                      style: TBlack,
+                    )),
+                const Spacer(),
+                Container(
+                    alignment: Alignment.topLeft,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: green1),
+                    child: Padding(
+                      padding: const EdgeInsets.all(5),
+                      child:Icon(Icons.add,color: white1,)
+                    )),
+                Container(
+                  margin: EdgeInsets.only(left: 10),
+                    alignment: Alignment.topLeft,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: red1),
+                    child: Padding(
+                      padding: const EdgeInsets.all(5),
+                      child:Icon(Icons.cancel_outlined,color: white1,)
                     )),
               ],
             ),

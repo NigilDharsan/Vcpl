@@ -128,133 +128,136 @@ class _Centering_TransactionState extends ConsumerState<Centering_Transaction> {
         isBlue: true,
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(
-                height: 25,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Title_Style(Title: 'Site Name', isStatus: true),
-                      Container(
-                        width: MediaQuery.of(context).size.width / 2,
-                        child: dropDownField(
-                          context,
-                          value: workTypeOption,
-                          listValue: workTypeVal,
-                          onChanged: (String? newValue) async {
-                            ListData result = widget.sitenameData.firstWhere(
-                                (value) => value.siteName == newValue);
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 20, right: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Title_Style(Title: 'Site Name', isStatus: true),
+                        Container(
+                          width: MediaQuery.of(context).size.width / 2,
+                          child: dropDownField(
+                            context,
+                            value: workTypeOption,
+                            listValue: workTypeVal,
+                            onChanged: (String? newValue) async {
+                              ListData result = widget.sitenameData.firstWhere(
+                                  (value) => value.siteName == newValue);
 
-                            site_id = result.id.toString();
-                            LoadingOverlay.show(context);
+                              site_id = result.id.toString();
+                              LoadingOverlay.show(context);
 
-                            await getTransactionList(site_id);
+                              await getTransactionList(site_id);
 
-                            if (site_id != "" && material_id != "") {
-                              await getStocks(site_id, material_id);
-                              LoadingOverlay.hide();
-                            } else {
-                              setState(() {
-                                workTypeOption = newValue;
-                              });
-                            }
-                          },
-                          hint: 'Site Name',
+                              if (site_id != "" && material_id != "") {
+                                await getStocks(site_id, material_id);
+                                LoadingOverlay.hide();
+                              } else {
+                                setState(() {
+                                  workTypeOption = newValue;
+                                });
+                              }
+                            },
+                            hint: 'Site Name',
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  Column(
-                    children: [
-                      Title_Style(Title: 'Opening Balance', isStatus: true),
-                      Container(
-                        width: MediaQuery.of(context).size.width / 4.5,
-                        child: textFormField2(
-                          // isEnabled: false,
-                          hintText: "00",
-                          keyboardtype: TextInputType.phone,
-                          Controller: _openingBalance,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-                          onChanged: null,
-                          validating: null,
+                      ],
+                    ),
+                    const Spacer(),
+                    Column(
+                      children: [
+                        Title_Style(Title: 'Opening Balance', isStatus: true),
+                        Container(
+                          width: MediaQuery.of(context).size.width / 4.5,
+                          child: textFormField2(
+                            // isEnabled: false,
+                            hintText: "00",
+                            keyboardtype: TextInputType.phone,
+                            Controller: _openingBalance,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            onChanged: null,
+                            validating: null,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Title_Style(Title: 'Material Name', isStatus: true),
-              dropDownField(
-                context,
-                value: materialName,
-                listValue: materialNameOption,
-                onChanged: (String? newValue) async {
-                  ListData result = materialData
-                      .firstWhere((value) => value.productName == newValue);
+                      ],
+                    ),
+                  ],
+                ),
+                Title_Style(Title: 'Material Name', isStatus: true),
+                dropDownField(
+                  context,
+                  value: materialName,
+                  listValue: materialNameOption,
+                  onChanged: (String? newValue) async {
+                    ListData result = materialData
+                        .firstWhere((value) => value.productName == newValue);
 
-                  material_id = result.id.toString();
+                    material_id = result.id.toString();
 
-                  LoadingOverlay.show(context);
+                    LoadingOverlay.show(context);
 
-                  // await getTransactionList(site_id);
+                    // await getTransactionList(site_id);
 
-                  if (site_id != "" && material_id != "") {
-                    await getStocks(site_id, material_id);
+                    if (site_id != "" && material_id != "") {
+                      await getStocks(site_id, material_id);
 
-                    LoadingOverlay.hide();
-                  } else {
-                    LoadingOverlay.hide();
-                    setState(() {
-                      materialName = newValue;
-                    });
-                  }
-                },
-                hint: 'Select Material Name',
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 25, bottom: 20),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15), color: white1),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20, bottom: 20),
-                        child: textFormFieldSearchBar(
-                          keyboardtype: TextInputType.text,
-                          hintText: "Search ...",
-                          Controller: null,
-                          validating: null,
-                          onChanged: null,
-                          onTap: () {},
+                      LoadingOverlay.hide();
+                    } else {
+                      LoadingOverlay.hide();
+                      setState(() {
+                        materialName = newValue;
+                      });
+                    }
+                  },
+                  hint: 'Select Material Name',
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 25, bottom: 20),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15), color: white1),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20, bottom: 20),
+                          child: textFormFieldSearchBar(
+                            keyboardtype: TextInputType.text,
+                            hintText: "Search ...",
+                            Controller: null,
+                            validating: null,
+                            onChanged: null,
+                            onTap: () {},
+                          ),
                         ),
-                      ),
-                      Container(
-                          height: MediaQuery.of(context).size.height / 1.7,
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 15),
-                            child: _cementHistoryList(context, transactionList),
-                          )),
-                    ],
+                        Container(
+                            // height: MediaQuery.of(context).size.height / 1.7,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 15),
+                              child: _cementHistoryList(context, transactionList),
+                            )),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -14,7 +14,9 @@ import 'package:vcpl/Src/Transaction_History_Ui/Shop_Transaction_Screen.dart';
 import 'package:vcpl/Src/Transaction_History_Ui/Tools_And_Plant_Transaction_Screen.dart';
 import 'package:vcpl/Src/Utilits/Common_Colors.dart';
 
+import '../Pending_Transaction_Ui/Pending_Transaction_Screen.dart';
 import 'Common_Button.dart';
+import 'Common_List.dart';
 
 //CEMENT POP UP
 Widget Cement_Pop_Up(BuildContext context, List<ListData> sitenameData,
@@ -44,6 +46,16 @@ Widget Cement_Pop_Up(BuildContext context, List<ListData> sitenameData,
                 MaterialPageRoute(
                     builder: (context) => Add_Cement_Transaction_Screen(
                         sitenameData, siteListData, vehicleListData)));
+          }),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 25),
+          child: CommonElevatedButton(context, "Pending Transactions", () {
+            Navigator.pop(context);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Pending_Transaction_Screen()));
           }),
         ),
       ],
@@ -212,6 +224,18 @@ Widget Labour_Pop_Up(BuildContext context, List<ListData> siteListData) {
                 MaterialPageRoute(
                     builder: (context) =>
                         Add_Labours_Assigning_Screen(siteListData)));
+          }),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 20, bottom: 25),
+          child: CommonElevatedButton(
+              context, "Pending Transaction", () {
+            Navigator.pop(context);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        Pending_Transaction_Screen()));
           }),
         ),
       ],

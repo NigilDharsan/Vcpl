@@ -243,7 +243,7 @@ class _Add_Labours_Assigning_ScreenState
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                  width: MediaQuery.of(context).size.width / 1.5,
+                  width: MediaQuery.of(context).size.width / 1.6,
                   child: Text(
                     "${laboursCategoryList[index].categoryName}",
                     style: Textfield_Style,

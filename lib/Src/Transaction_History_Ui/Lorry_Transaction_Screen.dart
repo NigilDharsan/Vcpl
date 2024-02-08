@@ -127,7 +127,7 @@ class _Lorry_Transaction_ScreenState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(
-                height: 25,
+                height: 15,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -213,7 +213,7 @@ class _Lorry_Transaction_ScreenState
                         ),
                       ),
                       Container(
-                          height: MediaQuery.of(context).size.height / 1.7,
+                          // height: MediaQuery.of(context).size.height / 1.7,
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 15),
                             child: _cementHistoryList(context, materialData),
