@@ -1,19 +1,30 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vcpl/Src/Common_Widgets/Common_List.dart';
 import 'package:vcpl/Src/Common_Widgets/Custom_App_Bar.dart';
 import 'package:vcpl/Src/Common_Widgets/Text_Form_Field.dart';
+import 'package:vcpl/Src/Models/CommonListModel.dart';
+import 'package:vcpl/Src/Models/CommonModel.dart';
+import 'package:vcpl/Src/Utilits/ApiService.dart';
 import 'package:vcpl/Src/Utilits/Common_Colors.dart';
+import 'package:vcpl/Src/Utilits/ConstantsApi.dart';
+import 'package:vcpl/Src/Utilits/Generic.dart';
+import 'package:vcpl/Src/Utilits/Loading_Overlay.dart';
 import 'package:vcpl/Src/Utilits/Text_Style.dart';
 
-class Centering_Transaction extends StatefulWidget {
-  const Centering_Transaction({super.key});
+class Centering_Transaction extends ConsumerStatefulWidget {
+  List<ListData> sitenameData = [];
+
+  Centering_Transaction(this.sitenameData, {super.key});
 
   @override
-  State<Centering_Transaction> createState() => _Centering_TransactionState();
+  ConsumerState<Centering_Transaction> createState() =>
+      _Centering_TransactionState();
 }
 
-class _Centering_TransactionState extends State<Centering_Transaction> {
+class _Centering_TransactionState extends ConsumerState<Centering_Transaction> {
   String? workTypeOption;
   List<String> workTypeVal = [
     "VKT Godown",
@@ -28,6 +39,7 @@ class _Centering_TransactionState extends State<Centering_Transaction> {
   ];
 
   String? materialName;
+  List<ListData> materialData = [];
   List<String> materialNameOption = [
     "1.2 Cross Ledger",
     "H Frame",
@@ -35,7 +47,75 @@ class _Centering_TransactionState extends State<Centering_Transaction> {
     "GPS 1.25MM",
     "SPAN(INNER)",
   ];
+  List<ListData> transactionList = [];
+
+  String site_id = "";
+  String material_id = "";
+
   TextEditingController _openingBalance = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    workTypeVal = widget.sitenameData.map((e) => e.siteName ?? "").toList();
+
+    getMaterialNameList();
+  }
+
+  void getMaterialNameList() async {
+    LoadingOverlay.show(context);
+
+    final apiService = ApiService(ref.read(dioProvider));
+
+    final postResponse =
+        await apiService.post1<CommonListModel>(ConstantApi.centeringMaterials);
+    LoadingOverlay.hide();
+    if (postResponse.success == true) {
+      setState(() {
+        materialData = postResponse.data!;
+        materialNameOption =
+            materialData.map((e) => e.productName ?? "").toList();
+        print(postResponse);
+
+        print(materialNameOption);
+      });
+    }
+  }
+
+  getTransactionList(String site_id) async {
+    final apiService = ApiService(ref.read(dioProvider));
+
+    var formData = FormData.fromMap({"current_site_id": site_id});
+
+    final postResponse = await apiService.post<CommonListModel>(
+        ConstantApi.centeringTransactionList, formData);
+    LoadingOverlay.hide();
+
+    if (postResponse.success == true) {
+      setState(() {
+        transactionList = postResponse.data!;
+      });
+    } else {}
+  }
+
+  getStocks(String site_id, String material_id) async {
+    final apiService = ApiService(ref.read(dioProvider));
+
+    var formData =
+        FormData.fromMap({"site_id": site_id, "material_id": material_id});
+
+    final postResponse = await apiService.post<CommonModel>(
+        ConstantApi.getCenteringStocks, formData);
+    if (postResponse.success == true && postResponse.data != null) {
+      setState(() {
+        _openingBalance.text = postResponse.data!.stock.toString();
+      });
+    } else {
+      ShowToastMessage(postResponse.message ?? "");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,10 +152,23 @@ class _Centering_TransactionState extends State<Centering_Transaction> {
                           context,
                           value: workTypeOption,
                           listValue: workTypeVal,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              workTypeOption = newValue;
-                            });
+                          onChanged: (String? newValue) async {
+                            ListData result = widget.sitenameData.firstWhere(
+                                (value) => value.siteName == newValue);
+
+                            site_id = result.id.toString();
+                            LoadingOverlay.show(context);
+
+                            await getTransactionList(site_id);
+
+                            if (site_id != "" && material_id != "") {
+                              await getStocks(site_id, material_id);
+                              LoadingOverlay.hide();
+                            } else {
+                              setState(() {
+                                workTypeOption = newValue;
+                              });
+                            }
                           },
                           hint: 'Site Name',
                         ),
@@ -109,10 +202,26 @@ class _Centering_TransactionState extends State<Centering_Transaction> {
                 context,
                 value: materialName,
                 listValue: materialNameOption,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    materialName = newValue;
-                  });
+                onChanged: (String? newValue) async {
+                  ListData result = materialData
+                      .firstWhere((value) => value.productName == newValue);
+
+                  material_id = result.id.toString();
+
+                  LoadingOverlay.show(context);
+
+                  // await getTransactionList(site_id);
+
+                  if (site_id != "" && material_id != "") {
+                    await getStocks(site_id, material_id);
+
+                    LoadingOverlay.hide();
+                  } else {
+                    LoadingOverlay.hide();
+                    setState(() {
+                      materialName = newValue;
+                    });
+                  }
                 },
                 hint: 'Select Material Name',
               ),
@@ -139,7 +248,7 @@ class _Centering_TransactionState extends State<Centering_Transaction> {
                           height: MediaQuery.of(context).size.height / 1.7,
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 15),
-                            child: _cementHistoryList(context),
+                            child: _cementHistoryList(context, transactionList),
                           )),
                     ],
                   ),
@@ -153,19 +262,19 @@ class _Centering_TransactionState extends State<Centering_Transaction> {
   }
 }
 
-Widget _cementHistoryList(context) {
+Widget _cementHistoryList(context, List<ListData> transactionList) {
   return ListView.builder(
-    itemCount: 5,
+    itemCount: transactionList.length,
     shrinkWrap: true,
     scrollDirection: Axis.vertical,
     physics: const NeverScrollableScrollPhysics(),
     itemBuilder: (BuildContext context, int index) {
       return Common_Transaction(
         context,
-        isTag: 'Received',
-        Date: '15 November 2023',
-        MaterialName: '1.2 Cross Ledger',
-        Quantity: '50',
+        isTag: transactionList[index].transactionType ?? "",
+        Date: transactionList[index].createdAt ?? "",
+        MaterialName: transactionList[index].material ?? "",
+        Quantity: "${transactionList[index].quantity ?? 0}",
       );
     },
   );

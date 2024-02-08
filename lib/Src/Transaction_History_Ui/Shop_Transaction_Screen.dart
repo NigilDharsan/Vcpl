@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vcpl/Src/Common_Widgets/Common_List.dart';
 import 'package:vcpl/Src/Common_Widgets/Custom_App_Bar.dart';
 import 'package:vcpl/Src/Common_Widgets/Text_Form_Field.dart';
+import 'package:vcpl/Src/Models/CommonListModel.dart';
 import 'package:vcpl/Src/Utilits/Common_Colors.dart';
 import 'package:vcpl/Src/Utilits/Text_Style.dart';
 
-class Shop_Transaction_Screen extends StatefulWidget {
-  const Shop_Transaction_Screen({super.key});
+class Shop_Transaction_Screen extends ConsumerStatefulWidget {
+  List<ListData> sitenameData = [];
+
+  Shop_Transaction_Screen(this.sitenameData, {super.key});
 
   @override
-  State<Shop_Transaction_Screen> createState() => _Shop_Transaction_ScreenState();
+  ConsumerState<Shop_Transaction_Screen> createState() =>
+      _Shop_Transaction_ScreenState();
 }
 
-class _Shop_Transaction_ScreenState extends State<Shop_Transaction_Screen> {
+class _Shop_Transaction_ScreenState
+    extends ConsumerState<Shop_Transaction_Screen> {
   String? workTypeOption;
   List<String> workTypeVal = [
     "VKT Godown",

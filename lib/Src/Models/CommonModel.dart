@@ -7,7 +7,15 @@ class CommonModel {
 
   CommonModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+
+    if (json['data'] is Map<String, dynamic>) {
+      data = Data.fromJson(json['data']);
+    } else if (json['data'] is List<dynamic>) {
+      // Handle empty list as well
+      data = null;
+    } else {
+      data = json['data'];
+    }
     message = json['message'];
   }
 

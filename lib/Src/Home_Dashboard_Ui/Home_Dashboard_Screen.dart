@@ -1,18 +1,87 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vcpl/Src/Common_Widgets/Common_Pop_Up.dart';
+import 'package:vcpl/Src/Models/CommonListModel.dart';
+import 'package:vcpl/Src/Models/VehicleModel.dart';
+import 'package:vcpl/Src/Utilits/ApiService.dart';
 import 'package:vcpl/Src/Utilits/Common_Colors.dart';
+import 'package:vcpl/Src/Utilits/ConstantsApi.dart';
+import 'package:vcpl/Src/Utilits/Generic.dart';
+import 'package:vcpl/Src/Utilits/Loading_Overlay.dart';
 import 'package:vcpl/Src/Utilits/Text_Style.dart';
 
 import '../Common_Widgets/Custom_App_Bar.dart';
 
-class Home_Dashboard_Screen extends StatefulWidget {
+class Home_Dashboard_Screen extends ConsumerStatefulWidget {
   const Home_Dashboard_Screen({super.key});
 
   @override
-  State<Home_Dashboard_Screen> createState() => _Home_Dashboard_ScreenState();
+  ConsumerState<Home_Dashboard_Screen> createState() =>
+      _Home_Dashboard_ScreenState();
 }
 
-class _Home_Dashboard_ScreenState extends State<Home_Dashboard_Screen> {
+class _Home_Dashboard_ScreenState extends ConsumerState<Home_Dashboard_Screen> {
+  List<ListData> sitenameData = [];
+  List<ListData> siteListData = [];
+  List<VehicleData> vechileNumberOtion = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    initalApiCalls();
+  }
+
+  void initalApiCalls() async {
+    LoadingOverlay.show(context);
+
+    await getSiteList();
+    await getSiteNameList();
+    await getVehicleList();
+
+    LoadingOverlay.hide();
+  }
+
+  getSiteNameList() async {
+    final apiService = ApiService(ref.read(dioProvider));
+
+    var formData = FormData.fromMap({"user_id": await getUserID()});
+
+    final postResponse = await apiService.post<CommonListModel>(
+        ConstantApi.siteInfoUrl, formData);
+    if (postResponse.success == true) {
+      setState(() {
+        sitenameData = postResponse.data!;
+      });
+    }
+  }
+
+  getSiteList() async {
+    final apiService = ApiService(ref.read(dioProvider));
+
+    final postResponse =
+        await apiService.post1<CommonListModel>(ConstantApi.siteListUrl);
+    if (postResponse.success == true) {
+      setState(() {
+        siteListData = postResponse.data!;
+      });
+    }
+  }
+
+  getVehicleList() async {
+    final apiService = ApiService(ref.read(dioProvider));
+
+    final postResponse =
+        await apiService.post1<VehicleModel>(ConstantApi.vehicleListUrl);
+    if (postResponse.success == true) {
+      setState(() {
+        vechileNumberOtion = postResponse.data!;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,7 +125,8 @@ class _Home_Dashboard_ScreenState extends State<Home_Dashboard_Screen> {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return Cement_Pop_Up(context);
+                            return Cement_Pop_Up(context, sitenameData,
+                                siteListData, vechileNumberOtion);
                           },
                         );
                       },
@@ -69,7 +139,7 @@ class _Home_Dashboard_ScreenState extends State<Home_Dashboard_Screen> {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return Labour_Pop_Up(context);
+                            return Labour_Pop_Up(context, siteListData);
                           },
                         );
                       },
@@ -89,7 +159,8 @@ class _Home_Dashboard_ScreenState extends State<Home_Dashboard_Screen> {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return Centering_Pop_Up(context);
+                            return Centering_Pop_Up(context, sitenameData,
+                                siteListData, vechileNumberOtion);
                           },
                         );
                       },
@@ -102,7 +173,8 @@ class _Home_Dashboard_ScreenState extends State<Home_Dashboard_Screen> {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return Tools_Pop_Up(context);
+                            return Tools_Pop_Up(context, sitenameData,
+                                siteListData, vechileNumberOtion);
                           },
                         );
                       },
@@ -122,7 +194,8 @@ class _Home_Dashboard_ScreenState extends State<Home_Dashboard_Screen> {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return Lorry_Pop_Up(context);
+                            return Lorry_Pop_Up(context, sitenameData,
+                                siteListData, vechileNumberOtion);
                           },
                         );
                       },
@@ -135,7 +208,7 @@ class _Home_Dashboard_ScreenState extends State<Home_Dashboard_Screen> {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return Shop_Pop_Up(context);
+                            return Shop_Pop_Up(context, sitenameData);
                           },
                         );
                       },

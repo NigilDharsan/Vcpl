@@ -1,6 +1,6 @@
 class VehicleModel {
   bool? success;
-  List<Data>? data;
+  List<VehicleData>? data;
   String? message;
 
   VehicleModel({this.success, this.data, this.message});
@@ -8,9 +8,9 @@ class VehicleModel {
   VehicleModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     if (json['data'] != null) {
-      data = <Data>[];
+      data = <VehicleData>[];
       json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
+        data!.add(new VehicleData.fromJson(v));
       });
     }
     message = json['message'];
@@ -27,7 +27,7 @@ class VehicleModel {
   }
 }
 
-class Data {
+class VehicleData {
   int? id;
   String? vehicleName;
   String? vehicleNo;
@@ -39,7 +39,7 @@ class Data {
   String? createdAt;
   String? updatedAt;
 
-  Data(
+  VehicleData(
       {this.id,
       this.vehicleName,
       this.vehicleNo,
@@ -51,7 +51,7 @@ class Data {
       this.createdAt,
       this.updatedAt});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  VehicleData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     vehicleName = json['vehicle_name'];
     vehicleNo = json['vehicle_no'];

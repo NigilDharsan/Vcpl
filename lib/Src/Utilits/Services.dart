@@ -1,32 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vcpl/Src/Models/CommonListModel.dart';
-import 'package:vcpl/Src/Models/CommonModel.dart';
 import 'package:vcpl/Src/Models/LoginModel.dart';
 import 'package:vcpl/Src/Models/VehicleModel.dart';
 import 'package:vcpl/Src/Utilits/Generic.dart';
 
-final dioProvider = Provider<Dio>((ref) {
-  final dio = Dio();
-  dio.interceptors.add(LogInterceptor(responseBody: true)); // For debugging
-  return dio;
-});
+final dioProvider = Provider<Dio>((ref) => Dio());
 
-// final apiServiceProvider = Provider<ApiService>((ref) {
-//   final dio = ref.read(dioProvider);
-//   return ApiService(dio);
-// });
-//
-// class ApiService {
-//   final Dio _dio;
-//   ApiService(this._dio);
-//
-// }
-
-class ApiService {
+class Api {
   final Dio _dio;
 
-  ApiService(Dio read, {Dio? dio}) : _dio = dio ?? createDioWithAuth();
+  Api(Dio read, {Dio? dio}) : _dio = dio ?? createDioWithAuth();
 
   static Dio createDioWithAuth() {
     Dio dio = Dio();
@@ -55,27 +38,11 @@ class ApiService {
         return LoginModel.fromJson(json) as T;
       } else if (T == VehicleModel) {
         return VehicleModel.fromJson(json) as T;
-      } else if (T == CommonListModel) {
-        return CommonListModel.fromJson(json) as T;
-      } else if (T == CommonModel) {
-        return CommonModel.fromJson(json) as T;
       }
     }
 
     // Add more conditionals for other model classes as needed
     throw Exception("Unknown model type");
-  }
-
-  Future<T> _requestGET<T>(String path) async {
-    try {
-      final response = await _dio.get(path);
-
-      return _fromJson<T>(response.data);
-    } on DioException catch (e) {
-      return _fromJson<T>(e.response?.data);
-    } catch (e) {
-      throw e;
-    }
   }
 
   Future<T> _requestPOST<T>(
@@ -93,31 +60,23 @@ class ApiService {
     }
   }
 
-  Future<T> _requestPOST1<T>(String path) async {
-    try {
-      final response = await _dio.post(path);
-
-      return _fromJson<T>(response.data);
-    } on DioException catch (e) {
-      return _fromJson<T>(e.response?.data);
-    } catch (e) {
-      throw e;
-    }
-  }
-
-  Future<dynamic> get<T>(String path) async {
-    return _requestGET<T>(path);
-  }
-
   Future<T> post<T>(String path, FormData data) async {
     return _requestPOST<T>(path, data: data);
   }
 
   Future<T> post1<T>(String path) async {
-    return _requestPOST1<T>(path);
+    return _requestPOST<T>(path);
   }
 
-  // API method for login endpoint without interceptor
+  Future<T> postData<T>(FormData body) async {
+    try {
+      final response = await _dio.post('YOUR_POST_API_ENDPOINT', data: body);
+      return response.data;
+    } catch (error) {
+      throw error; // Handle error accordingly
+    }
+  }
+
   Future<T> login<T>(String path, FormData data) async {
     try {
       Dio dio = Dio();

@@ -5,6 +5,8 @@ import 'package:vcpl/Src/Add_Transaction_Ui/Add_Labours_Assigning_Screen.dart';
 import 'package:vcpl/Src/Add_Transaction_Ui/Add_Lorry_Transaction_Screen.dart';
 import 'package:vcpl/Src/Add_Transaction_Ui/Add_Shop_Transactions_Screen.dart';
 import 'package:vcpl/Src/Add_Transaction_Ui/Add_ToolsandPlants_Transactions_Screen.dart';
+import 'package:vcpl/Src/Models/CommonListModel.dart';
+import 'package:vcpl/Src/Models/VehicleModel.dart';
 import 'package:vcpl/Src/Transaction_History_Ui/Cement_Transaction_Screen.dart';
 import 'package:vcpl/Src/Transaction_History_Ui/Centering_Transaction_Screen.dart';
 import 'package:vcpl/Src/Transaction_History_Ui/Lorry_Transaction_Screen.dart';
@@ -15,7 +17,8 @@ import 'package:vcpl/Src/Utilits/Common_Colors.dart';
 import 'Common_Button.dart';
 
 //CEMENT POP UP
-Widget Cement_Pop_Up(BuildContext context) {
+Widget Cement_Pop_Up(BuildContext context, List<ListData> sitenameData,
+    List<ListData> siteListData, List<VehicleData> vehicleListData) {
   return AlertDialog(
     surfaceTintColor: white1,
     content: Column(
@@ -26,8 +29,10 @@ Widget Cement_Pop_Up(BuildContext context) {
           padding: const EdgeInsets.only(top: 25, bottom: 20),
           child: CommonElevatedButton(context, "View Transaction History", () {
             Navigator.pop(context);
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => Cement_Transaction()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Cement_Transaction(sitenameData)));
           }),
         ),
         Padding(
@@ -37,7 +42,8 @@ Widget Cement_Pop_Up(BuildContext context) {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => Add_Cement_Transaction_Screen()));
+                    builder: (context) => Add_Cement_Transaction_Screen(
+                        sitenameData, siteListData, vehicleListData)));
           }),
         ),
       ],
@@ -46,7 +52,8 @@ Widget Cement_Pop_Up(BuildContext context) {
 }
 
 //CENTERING POP UP
-Widget Centering_Pop_Up(BuildContext context) {
+Widget Centering_Pop_Up(BuildContext context, List<ListData> sitenameData,
+    List<ListData> siteListData, List<VehicleData> vehicleListData) {
   return AlertDialog(
     surfaceTintColor: white1,
     content: Column(
@@ -60,7 +67,7 @@ Widget Centering_Pop_Up(BuildContext context) {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => Centering_Transaction()));
+                    builder: (context) => Centering_Transaction(sitenameData)));
           }),
         ),
         Padding(
@@ -71,7 +78,8 @@ Widget Centering_Pop_Up(BuildContext context) {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => Add_Centering_Transaction_Screen()));
+                    builder: (context) => Add_Centering_Transaction_Screen(
+                        sitenameData, siteListData, vehicleListData)));
           }),
         ),
       ],
@@ -80,7 +88,8 @@ Widget Centering_Pop_Up(BuildContext context) {
 }
 
 //LORRY POP UP
-Widget Lorry_Pop_Up(BuildContext context) {
+Widget Lorry_Pop_Up(BuildContext context, List<ListData> sitenameData,
+    List<ListData> siteListData, List<VehicleData> vehicleListData) {
   return AlertDialog(
     surfaceTintColor: white1,
     content: Column(
@@ -94,7 +103,8 @@ Widget Lorry_Pop_Up(BuildContext context) {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => Lorry_Transaction_Screen()));
+                    builder: (context) =>
+                        Lorry_Transaction_Screen(sitenameData)));
           }),
         ),
         Padding(
@@ -104,7 +114,8 @@ Widget Lorry_Pop_Up(BuildContext context) {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => Add_Lorry_Transaction_Screen()));
+                    builder: (context) => Add_Lorry_Transaction_Screen(
+                        sitenameData, siteListData, vehicleListData)));
           }),
         ),
       ],
@@ -113,7 +124,7 @@ Widget Lorry_Pop_Up(BuildContext context) {
 }
 
 //SHOP POP UP
-Widget Shop_Pop_Up(BuildContext context) {
+Widget Shop_Pop_Up(BuildContext context, List<ListData> sitenameData) {
   return AlertDialog(
     surfaceTintColor: white1,
     content: Column(
@@ -127,7 +138,8 @@ Widget Shop_Pop_Up(BuildContext context) {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => Shop_Transaction_Screen()));
+                    builder: (context) =>
+                        Shop_Transaction_Screen(sitenameData)));
           }),
         ),
         Padding(
@@ -146,7 +158,8 @@ Widget Shop_Pop_Up(BuildContext context) {
 }
 
 //TOOLS AND PLANT POP UP
-Widget Tools_Pop_Up(BuildContext context) {
+Widget Tools_Pop_Up(BuildContext context, List<ListData> sitenameData,
+    List<ListData> siteListData, List<VehicleData> vehicleListData) {
   return AlertDialog(
     surfaceTintColor: white1,
     content: Column(
@@ -161,7 +174,7 @@ Widget Tools_Pop_Up(BuildContext context) {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        Tools_And_Plant_Transaction_Screen()));
+                        Tools_And_Plant_Transaction_Screen(sitenameData)));
           }),
         ),
         Padding(
@@ -172,8 +185,8 @@ Widget Tools_Pop_Up(BuildContext context) {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) =>
-                        Add_ToolsAndPlant_Transaction_Screen()));
+                    builder: (context) => Add_ToolsAndPlant_Transaction_Screen(
+                        sitenameData, siteListData, vehicleListData)));
           }),
         ),
       ],
@@ -182,7 +195,7 @@ Widget Tools_Pop_Up(BuildContext context) {
 }
 
 //LABOUR POP UP
-Widget Labour_Pop_Up(BuildContext context) {
+Widget Labour_Pop_Up(BuildContext context, List<ListData> siteListData) {
   return AlertDialog(
     surfaceTintColor: white1,
     content: Column(
@@ -197,7 +210,8 @@ Widget Labour_Pop_Up(BuildContext context) {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => Add_Labours_Assigning_Screen()));
+                    builder: (context) =>
+                        Add_Labours_Assigning_Screen(siteListData)));
           }),
         ),
       ],

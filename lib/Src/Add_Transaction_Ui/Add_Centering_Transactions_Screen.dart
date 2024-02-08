@@ -1,19 +1,36 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vcpl/Src/Common_Widgets/Common_Button.dart';
 import 'package:vcpl/Src/Common_Widgets/Custom_App_Bar.dart';
 import 'package:vcpl/Src/Common_Widgets/Text_Form_Field.dart';
+import 'package:vcpl/Src/Models/CommonListModel.dart';
+import 'package:vcpl/Src/Models/CommonModel.dart';
+import 'package:vcpl/Src/Models/VehicleModel.dart';
+import 'package:vcpl/Src/Utilits/ApiService.dart';
 import 'package:vcpl/Src/Utilits/Common_Colors.dart';
+import 'package:vcpl/Src/Utilits/ConstantsApi.dart';
+import 'package:vcpl/Src/Utilits/Generic.dart';
+import 'package:vcpl/Src/Utilits/Loading_Overlay.dart';
 import 'package:vcpl/Src/utilits/Text_Style.dart';
 
-class Add_Centering_Transaction_Screen extends StatefulWidget {
-  const Add_Centering_Transaction_Screen({super.key});
+class Add_Centering_Transaction_Screen extends ConsumerStatefulWidget {
+  List<ListData> sitenameData = [];
+  List<ListData> siteListData = [];
+  List<VehicleData> vehicleListData = [];
+
+  Add_Centering_Transaction_Screen(
+      this.siteListData, this.sitenameData, this.vehicleListData,
+      {super.key});
 
   @override
-  State<Add_Centering_Transaction_Screen> createState() => _Add_Centering_Transaction_ScreenState();
+  ConsumerState<Add_Centering_Transaction_Screen> createState() =>
+      _Add_Centering_Transaction_ScreenState();
 }
 
-class _Add_Centering_Transaction_ScreenState extends State<Add_Centering_Transaction_Screen> {
+class _Add_Centering_Transaction_ScreenState
+    extends ConsumerState<Add_Centering_Transaction_Screen> {
   String? trnsactionType;
   List<String> TransactionOtion = [
     "Issued to Site",
@@ -21,6 +38,8 @@ class _Add_Centering_Transaction_ScreenState extends State<Add_Centering_Transac
     "Received Cement",
   ];
   String? workTypeOption;
+  String? siteNameID;
+
   List<String> workTypeVal = [
     "VKT Godown",
     "Suresh Complex",
@@ -32,28 +51,190 @@ class _Add_Centering_Transaction_ScreenState extends State<Add_Centering_Transac
     "EPPINGER",
     "SARAYU SCHOOL",
   ];
+  List<String> toSiteList = [];
+  String? toSiteValue;
+  String? toSiteID;
+
+  String? vechileID;
   String? vechileNumber;
   List<String> vechileNumberOtion = [
     "TN 37 CC 2683",
     "TN 37 CC 2683",
     "TN 37 CC 2683",
   ];
+  String? materialName;
+  List<ListData> materialData = [];
+  List<String> materialNameOption = [];
+
+  String site_id = "";
+  String material_id = "";
+
   TextEditingController _TransferedSlip = TextEditingController();
+  TextEditingController _Quantity = TextEditingController();
+  TextEditingController _openingBalance = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    workTypeVal = widget.sitenameData.map((e) => e.siteName ?? "").toList();
+    toSiteList = widget.siteListData.map((e) => e.siteName ?? "").toList();
+    vechileNumberOtion =
+        widget.vehicleListData.map((e) => e.vehicleNo ?? "").toList();
+
+    getMaterialNameList();
+  }
+
+  void getMaterialNameList() async {
+    LoadingOverlay.show(context);
+
+    final apiService = ApiService(ref.read(dioProvider));
+
+    final postResponse =
+        await apiService.post1<CommonListModel>(ConstantApi.centeringMaterials);
+    LoadingOverlay.hide();
+    if (postResponse.success == true) {
+      setState(() {
+        materialData = postResponse.data!;
+        materialNameOption =
+            materialData.map((e) => e.productName ?? "").toList();
+        print(postResponse);
+
+        print(materialNameOption);
+      });
+    }
+  }
+
+  getStocks(String site_id, String material_id) async {
+    final apiService = ApiService(ref.read(dioProvider));
+
+    var formData =
+        FormData.fromMap({"site_id": site_id, "material_id": material_id});
+
+    final postResponse = await apiService.post<CommonModel>(
+        ConstantApi.getCenteringStocks, formData);
+    if (postResponse.success == true && postResponse.data != null) {
+      setState(() {
+        _openingBalance.text = postResponse.data!.stock.toString();
+      });
+    } else {
+      ShowToastMessage(postResponse.message ?? "");
+    }
+  }
+
+  void addCementTransaction(FormData formData) async {
+    LoadingOverlay.show(context);
+
+    final apiService = ApiService(ref.read(dioProvider));
+
+    final postResponse = await apiService.post<VehicleModel>(
+        ConstantApi.addCenteringTransaction, formData);
+    LoadingOverlay.hide();
+    if (postResponse.success == true) {}
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: white3,
-      appBar: Custom_AppBar(title: "Add Labours Assigning", actions: null, isBlue: true, isNav: true),
+      appBar: Custom_AppBar(
+          title: "Add Centering Transaction",
+          actions: null,
+          isBlue: true,
+          isNav: true),
       body: SingleChildScrollView(
         child: Container(
-          height: MediaQuery.of(context).size.height,
           child: Padding(
-            padding: const EdgeInsets.only(left: 20,right: 20),
+            padding: const EdgeInsets.only(left: 20, right: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Title_Style(Title: 'Site Name', isStatus: true),
+                        Container(
+                          width: MediaQuery.of(context).size.width / 2,
+                          child: dropDownField(
+                            context,
+                            value: workTypeOption,
+                            listValue: workTypeVal,
+                            onChanged: (String? newValue) async {
+                              ListData result = widget.sitenameData.firstWhere(
+                                  (value) => value.siteName == newValue);
+
+                              site_id = result.id.toString();
+                              LoadingOverlay.show(context);
+
+                              if (site_id != "" && material_id != "") {
+                                await getStocks(site_id, material_id);
+                                LoadingOverlay.hide();
+                              } else {
+                                setState(() {
+                                  workTypeOption = newValue;
+                                });
+                              }
+                            },
+                            hint: 'Site Name',
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    Column(
+                      children: [
+                        Title_Style(Title: 'Opening Balance', isStatus: true),
+                        Container(
+                          width: MediaQuery.of(context).size.width / 4.5,
+                          child: textFormField2(
+                            // isEnabled: false,
+                            hintText: "00",
+                            keyboardtype: TextInputType.phone,
+                            Controller: _openingBalance,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            onChanged: null,
+                            validating: null,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Title_Style(Title: 'Material Name', isStatus: true),
+                dropDownField(
+                  context,
+                  value: materialName,
+                  listValue: materialNameOption,
+                  onChanged: (String? newValue) async {
+                    ListData result = materialData
+                        .firstWhere((value) => value.productName == newValue);
+
+                    material_id = result.id.toString();
+
+                    LoadingOverlay.show(context);
+
+                    if (site_id != "" && material_id != "") {
+                      await getStocks(site_id, material_id);
+
+                      LoadingOverlay.hide();
+                    } else {
+                      LoadingOverlay.hide();
+                      setState(() {
+                        materialName = newValue;
+                      });
+                    }
+                  },
+                  hint: 'Select Material Name',
+                ),
                 //TRANSACTION TYPE
                 Title_Style(Title: 'Transaction Type', isStatus: true),
                 dropDownField(
@@ -64,59 +245,57 @@ class _Add_Centering_Transaction_ScreenState extends State<Add_Centering_Transac
                     setState(() {
                       trnsactionType = newValue;
                     });
-                  }, hint: 'Site Name',
+                  },
+                  hint: 'Site Name',
                 ),
                 //TO SITE NAME
                 Title_Style(Title: 'To Site Name  ', isStatus: true),
                 dropDownField(
                   context,
-                  value: workTypeOption,
-                  listValue: workTypeVal,
+                  value: toSiteValue,
+                  listValue: toSiteList,
                   onChanged: (String? newValue) {
                     setState(() {
-                      workTypeOption = newValue;
+                      toSiteValue = newValue;
                     });
-                  }, hint: 'Select To Site',
+                  },
+                  hint: 'Select To Site',
                 ),
                 //QUANTITY
                 Title_Style(Title: 'Quantity  ', isStatus: true),
                 textFormField2(
-                  // isEnabled: false,
+                    // isEnabled: false,
                     hintText: "Enter Quantity",
                     keyboardtype: TextInputType.phone,
-                    Controller: _TransferedSlip,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly],
+                    Controller: _Quantity,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     onChanged: null,
-                    validating:(value){
+                    validating: (value) {
                       if (value!.isEmpty) {
                         return 'Please Enter Quantity';
-                      } else if (value==null) {
+                      } else if (value == null) {
                         return 'Please Enter Quantity';
                       }
                       return null;
-                    }
-                ),
+                    }),
                 //TRANSFER SLIP NUMBER
                 Title_Style(Title: 'Transfer Slip Number  ', isStatus: true),
                 textFormField2(
-                  // isEnabled: false,
+                    // isEnabled: false,
                     hintText: "Enter Transfer Slip Number ",
                     keyboardtype: TextInputType.phone,
                     Controller: _TransferedSlip,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly],
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     onChanged: null,
-                    validating:(value){
+                    validating: (value) {
                       if (value!.isEmpty) {
                         return 'Please Enter Transfer Slip Number ';
-                      } else if (value==null) {
+                      } else if (value == null) {
                         return 'Please Enter Transfer Slip Number ';
                       }
                       return null;
-                    }
-                ),
-             //SELECT VECHILE
+                    }),
+                //SELECT VECHILE
                 Title_Style(Title: 'Vehicle No  ', isStatus: true),
                 dropDownField(
                   context,
@@ -126,14 +305,26 @@ class _Add_Centering_Transaction_ScreenState extends State<Add_Centering_Transac
                     setState(() {
                       vechileNumber = newValue;
                     });
-                  }, hint: 'Select Vechile',
+                  },
+                  hint: 'Select Vechile',
                 ),
 
                 //SUBMIT BUTTON
                 Padding(
-                  padding: const EdgeInsets.only(top: 100,left: 30,right: 30),
+                  padding: const EdgeInsets.only(
+                      top: 50, bottom: 50, left: 30, right: 30),
                   child: CommonElevatedButton(context, 'Submit', () {
+                    var formData = FormData.fromMap({
+                      "transaction_type": 1,
+                      "current_site_id": siteNameID,
+                      "quantity": _Quantity.text,
+                      "to_site_id": toSiteID,
+                      "transfer_slip_no": _TransferedSlip.text,
+                      "vehicle_id": vechileID,
+                      "material_id": material_id
+                    });
 
+                    addCementTransaction(formData);
                   }),
                 ),
               ],

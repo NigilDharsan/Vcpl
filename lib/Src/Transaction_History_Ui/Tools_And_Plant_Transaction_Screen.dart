@@ -1,19 +1,30 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vcpl/Src/Common_Widgets/Common_List.dart';
 import 'package:vcpl/Src/Common_Widgets/Custom_App_Bar.dart';
 import 'package:vcpl/Src/Common_Widgets/Text_Form_Field.dart';
+import 'package:vcpl/Src/Models/CommonListModel.dart';
+import 'package:vcpl/Src/Models/CommonModel.dart';
+import 'package:vcpl/Src/Utilits/ApiService.dart';
 import 'package:vcpl/Src/Utilits/Common_Colors.dart';
+import 'package:vcpl/Src/Utilits/ConstantsApi.dart';
+import 'package:vcpl/Src/Utilits/Loading_Overlay.dart';
 import 'package:vcpl/Src/Utilits/Text_Style.dart';
 
-class Tools_And_Plant_Transaction_Screen extends StatefulWidget {
-  const Tools_And_Plant_Transaction_Screen({super.key});
+class Tools_And_Plant_Transaction_Screen extends ConsumerStatefulWidget {
+  List<ListData> sitenameData = [];
+
+  Tools_And_Plant_Transaction_Screen(this.sitenameData, {super.key});
 
   @override
-  State<Tools_And_Plant_Transaction_Screen> createState() => _Tools_And_Plant_Transaction_ScreenState();
+  ConsumerState<Tools_And_Plant_Transaction_Screen> createState() =>
+      _Tools_And_Plant_Transaction_ScreenState();
 }
 
-class _Tools_And_Plant_Transaction_ScreenState extends State<Tools_And_Plant_Transaction_Screen> {
+class _Tools_And_Plant_Transaction_ScreenState
+    extends ConsumerState<Tools_And_Plant_Transaction_Screen> {
   String? workTypeOption;
   List<String> workTypeVal = [
     "VKT Godown",
@@ -28,6 +39,7 @@ class _Tools_And_Plant_Transaction_ScreenState extends State<Tools_And_Plant_Tra
   ];
 
   String? materialName;
+  List<ListData> materialData = [];
   List<String> materialNameOption = [
     "1.2 Cross Ledger",
     "H Frame",
@@ -36,6 +48,69 @@ class _Tools_And_Plant_Transaction_ScreenState extends State<Tools_And_Plant_Tra
     "SPAN(INNER)",
   ];
   TextEditingController _openingBalance = TextEditingController();
+
+  List<ListData> transactionList = [];
+
+  String stock_id = "";
+  String material_id = "";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    workTypeVal = widget.sitenameData.map((e) => e.siteName ?? "").toList();
+
+    getMaterialNameList();
+  }
+
+  void getMaterialNameList() async {
+    LoadingOverlay.show(context);
+
+    final apiService = ApiService(ref.read(dioProvider));
+
+    final postResponse = await apiService
+        .post1<CommonListModel>(ConstantApi.toolsandplantsMaterial);
+    LoadingOverlay.hide();
+    if (postResponse.success == true) {
+      setState(() {
+        materialData = postResponse.data!;
+        materialNameOption =
+            materialData.map((e) => e.productName ?? "").toList();
+      });
+    }
+  }
+
+  getTransactionList(String site_id) async {
+    final apiService = ApiService(ref.read(dioProvider));
+
+    var formData = FormData.fromMap({"current_site_id": site_id});
+
+    final postResponse = await apiService.post<CommonListModel>(
+        ConstantApi.cementTransactionList, formData);
+    if (postResponse.success == true) {
+      setState(() {
+        transactionList = postResponse.data!;
+      });
+    } else {
+      LoadingOverlay.hide();
+    }
+  }
+
+  getStocks(String site_id, String material_id) async {
+    final apiService = ApiService(ref.read(dioProvider));
+
+    var formData =
+        FormData.fromMap({"site_id": site_id, "material_id": material_id});
+
+    final postResponse = await apiService.post<CommonModel>(
+        ConstantApi.getCementStocks, formData);
+    if (postResponse.success == true) {
+      setState(() {
+        _openingBalance.text = postResponse.data!.stock.toString();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +150,11 @@ class _Tools_And_Plant_Transaction_ScreenState extends State<Tools_And_Plant_Tra
                           onChanged: (String? newValue) {
                             setState(() {
                               workTypeOption = newValue;
+
+                              ListData result = widget.sitenameData.firstWhere(
+                                  (value) => value.siteName == newValue);
+
+                              stock_id = result.id.toString();
                             });
                           },
                           hint: 'Site Name',
@@ -139,7 +219,7 @@ class _Tools_And_Plant_Transaction_ScreenState extends State<Tools_And_Plant_Tra
                           height: MediaQuery.of(context).size.height / 1.7,
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 15),
-                            child: _cementHistoryList(context),
+                            child: _cementHistoryList(context, transactionList),
                           )),
                     ],
                   ),
@@ -153,19 +233,19 @@ class _Tools_And_Plant_Transaction_ScreenState extends State<Tools_And_Plant_Tra
   }
 }
 
-Widget _cementHistoryList(context) {
+Widget _cementHistoryList(context, List<ListData> transactionList) {
   return ListView.builder(
-    itemCount: 5,
+    itemCount: transactionList.length,
     shrinkWrap: true,
     scrollDirection: Axis.vertical,
     physics: const NeverScrollableScrollPhysics(),
     itemBuilder: (BuildContext context, int index) {
       return Common_Transaction(
         context,
-        isTag: 'Purchased',
-        Date: '15 November 2023',
-        MaterialName: '1.2 Cross Ledger',
-        Quantity: '50',
+        isTag: transactionList[index].transactionType ?? "",
+        Date: transactionList[index].createdAt ?? "",
+        MaterialName: transactionList[index].material ?? "",
+        Quantity: '${transactionList[index].quantity ?? 0}',
       );
     },
   );

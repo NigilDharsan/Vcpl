@@ -1,6 +1,6 @@
 class CommonListModel {
   bool? success;
-  List<Data>? data;
+  List<ListData>? data;
   String? message;
 
   CommonListModel({this.success, this.data, this.message});
@@ -8,9 +8,9 @@ class CommonListModel {
   CommonListModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     if (json['data'] != null) {
-      data = <Data>[];
+      data = <ListData>[];
       json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
+        data!.add(new ListData.fromJson(v));
       });
     }
     message = json['message'];
@@ -27,7 +27,7 @@ class CommonListModel {
   }
 }
 
-class Data {
+class ListData {
   int? id;
   String? siteName;
   String? siteLocation;
@@ -48,8 +48,9 @@ class Data {
   int? unitId;
   String? material;
   int? materialId;
+  int labourCount = 0;
 
-  Data(
+  ListData(
       {this.id,
       this.siteName,
       this.siteLocation,
@@ -69,9 +70,10 @@ class Data {
       this.subcategoryId,
       this.unitId,
       this.material,
-      this.materialId});
+      this.materialId,
+      required this.labourCount});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  ListData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     siteName = json['site_name'];
     siteLocation = json['site_location'];

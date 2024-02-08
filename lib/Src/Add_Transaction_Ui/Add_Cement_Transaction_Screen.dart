@@ -1,9 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vcpl/Src/Common_Widgets/Common_Button.dart';
 import 'package:vcpl/Src/Common_Widgets/Custom_App_Bar.dart';
 import 'package:vcpl/Src/Common_Widgets/Text_Form_Field.dart';
+import 'package:vcpl/Src/Models/CommonListModel.dart';
+import 'package:vcpl/Src/Models/CommonModel.dart';
 import 'package:vcpl/Src/Models/VehicleModel.dart';
 import 'package:vcpl/Src/Utilits/ApiService.dart';
 import 'package:vcpl/Src/Utilits/Common_Colors.dart';
@@ -12,7 +15,13 @@ import 'package:vcpl/Src/Utilits/Loading_Overlay.dart';
 import 'package:vcpl/Src/Utilits/Text_Style.dart';
 
 class Add_Cement_Transaction_Screen extends ConsumerStatefulWidget {
-  const Add_Cement_Transaction_Screen({super.key});
+  List<ListData> sitenameData = [];
+  List<ListData> siteListData = [];
+  List<VehicleData> vehicleListData = [];
+
+  Add_Cement_Transaction_Screen(
+      this.sitenameData, this.siteListData, this.vehicleListData,
+      {super.key});
 
   @override
   ConsumerState<Add_Cement_Transaction_Screen> createState() =>
@@ -29,6 +38,8 @@ class _Add_Cement_Transaction_ScreenState
   ];
 
   String? workTypeOption;
+  String? siteNameID;
+
   List<String> workTypeVal = [
     "VKT Godown",
     "Suresh Complex",
@@ -40,8 +51,12 @@ class _Add_Cement_Transaction_ScreenState
     "EPPINGER",
     "SARAYU SCHOOL",
   ];
+  List<String> toSiteList = [];
+  String? toSiteValue;
+  String? toSiteID;
 
   String? vechileNumber;
+  String? vechileID;
   List<String> vechileNumberOtion = [
     "TN 37 CC 2683",
     "TN 37 CC 2683",
@@ -49,16 +64,22 @@ class _Add_Cement_Transaction_ScreenState
   ];
 
   TextEditingController _Bags = TextEditingController();
+  TextEditingController _transferSlipNo = TextEditingController();
+  TextEditingController _invoiceNo = TextEditingController();
+  TextEditingController _Grade = TextEditingController();
+
   TextEditingController _Purpose = TextEditingController();
+  TextEditingController _openingBalance = TextEditingController();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      getVehicleList();
-    });
+    workTypeVal = widget.sitenameData.map((e) => e.siteName ?? "").toList();
+    toSiteList = widget.siteListData.map((e) => e.siteName ?? "").toList();
+    vechileNumberOtion =
+        widget.vehicleListData.map((e) => e.vehicleNo ?? "").toList();
   }
 
   void getVehicleList() async {
@@ -77,6 +98,34 @@ class _Add_Cement_Transaction_ScreenState
     }
   }
 
+  getStocks(String site_id) async {
+    LoadingOverlay.show(context);
+
+    final apiService = ApiService(ref.read(dioProvider));
+    var formData = FormData.fromMap({"site_id": site_id});
+
+    final postResponse = await apiService.post<CommonModel>(
+        ConstantApi.getCementStocks, formData);
+    LoadingOverlay.hide();
+
+    if (postResponse.success == true) {
+      setState(() {
+        _openingBalance.text = postResponse.data!.stock.toString();
+      });
+    }
+  }
+
+  void addCementTransaction(FormData formData) async {
+    LoadingOverlay.show(context);
+
+    final apiService = ApiService(ref.read(dioProvider));
+
+    final postResponse = await apiService.post<VehicleModel>(
+        ConstantApi.addCementTransaction, formData);
+    LoadingOverlay.hide();
+    if (postResponse.success == true) {}
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,6 +140,56 @@ class _Add_Cement_Transaction_ScreenState
           padding: const EdgeInsets.only(left: 20, right: 20),
           child: Column(
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Title_Style(Title: 'Site Name', isStatus: true),
+                      Container(
+                        width: MediaQuery.of(context).size.width / 2,
+                        child: dropDownField(
+                          context,
+                          value: workTypeOption,
+                          listValue: workTypeVal,
+                          onChanged: (String? newValue) async {
+                            workTypeOption = newValue;
+
+                            ListData result = widget.sitenameData.firstWhere(
+                                (value) => value.siteName == newValue);
+
+                            getStocks(result.id.toString());
+                          },
+                          hint: 'Site Name',
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  Column(
+                    children: [
+                      Title_Style(Title: 'Opening Balance', isStatus: true),
+                      Container(
+                        width: MediaQuery.of(context).size.width / 4.5,
+                        child: textFormField2(
+                          // isEnabled: false,
+                          hintText: "00",
+                          keyboardtype: TextInputType.phone,
+                          Controller: _openingBalance,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                          onChanged: null,
+                          validating: null,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
               //TRANSACTION TYPE
               Title_Style(Title: 'Transaction Type', isStatus: true),
               dropDownField(
@@ -165,11 +264,11 @@ class _Add_Cement_Transaction_ScreenState
                   trnsactionType == "Transfer Cement"
                       ? dropDownField(
                           context,
-                          value: workTypeOption,
-                          listValue: workTypeVal,
+                          value: toSiteValue,
+                          listValue: toSiteList,
                           onChanged: (String? newValue) {
                             setState(() {
-                              workTypeOption = newValue;
+                              toSiteValue = newValue;
                             });
                           },
                           hint: 'Select To Site',
@@ -186,7 +285,7 @@ class _Add_Cement_Transaction_ScreenState
                           // isEnabled: false,
                           hintText: "Enter Transfer Slip Number ",
                           keyboardtype: TextInputType.phone,
-                          Controller: _Bags,
+                          Controller: _transferSlipNo,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly
                           ],
@@ -245,7 +344,7 @@ class _Add_Cement_Transaction_ScreenState
                           // isEnabled: false,
                           hintText: "Enter Invoie Number",
                           keyboardtype: TextInputType.phone,
-                          Controller: _Bags,
+                          Controller: _invoiceNo,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly
                           ],
@@ -268,7 +367,7 @@ class _Add_Cement_Transaction_ScreenState
                           // isEnabled: false,
                           hintText: "Entre Grade and Brand",
                           keyboardtype: TextInputType.text,
-                          Controller: _Bags,
+                          Controller: _Grade,
                           inputFormatters: null,
                           onChanged: null,
                           validating: (value) {
@@ -285,8 +384,41 @@ class _Add_Cement_Transaction_ScreenState
               //SUBMIT BUTTON
               Padding(
                 padding: const EdgeInsets.only(
-                    bottom: 100, top: 100, left: 30, right: 30),
-                child: CommonElevatedButton(context, 'Submit', () {}),
+                    bottom: 50, top: 50, left: 30, right: 30),
+                child: CommonElevatedButton(context, 'Submit', () {
+                  print("object");
+
+                  if (trnsactionType == "") {
+                    var formData = FormData.fromMap({
+                      "transaction_type": 1,
+                      "current_site_id": siteNameID,
+                      "quantity": _Bags.text,
+                      "to_site_id": toSiteID,
+                      "transfer_slip_no": _transferSlipNo.text,
+                      "vehicle_id": vechileID
+                    });
+
+                    addCementTransaction(formData);
+                  } else if (trnsactionType == "") {
+                    var formData = FormData.fromMap({
+                      "transaction_type": 2,
+                      "current_site_id": siteNameID,
+                      "quantity": _Bags.text,
+                      "bill_no": _invoiceNo.text,
+                      "grand_and_brand": _Grade.text,
+                      "vehicle_id": vechileID
+                    });
+                    addCementTransaction(formData);
+                  } else {
+                    var formData = FormData.fromMap({
+                      "transaction_type": 3,
+                      "current_site_id": siteNameID,
+                      "quantity": _Bags.text,
+                      "issued_purpose": _Purpose.text
+                    });
+                    addCementTransaction(formData);
+                  }
+                }),
               ),
             ],
           ),
