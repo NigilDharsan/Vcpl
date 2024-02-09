@@ -173,7 +173,7 @@ class _Login_ScreenState extends ConsumerState<Login_Screen> {
                                     builder: (context) => Home_Dashboard_Screen(
                                         postResponse.data?.permissions ?? [])));
                           } else {
-                            ShowToastMessage(postResponse.data?.error ?? "");
+                            ShowToastMessage(postResponse.message ?? "");
                           }
                         }
                       }))

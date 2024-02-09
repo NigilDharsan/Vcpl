@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vcpl/Src/Common_Widgets/Common_Pop_Up.dart';
@@ -8,7 +7,6 @@ import 'package:vcpl/Src/Models/VehicleModel.dart';
 import 'package:vcpl/Src/Utilits/ApiService.dart';
 import 'package:vcpl/Src/Utilits/Common_Colors.dart';
 import 'package:vcpl/Src/Utilits/ConstantsApi.dart';
-import 'package:vcpl/Src/Utilits/Generic.dart';
 import 'package:vcpl/Src/Utilits/Loading_Overlay.dart';
 import 'package:vcpl/Src/Utilits/Text_Style.dart';
 
@@ -40,8 +38,8 @@ class _Home_Dashboard_ScreenState extends ConsumerState<Home_Dashboard_Screen> {
   void initalApiCalls() async {
     LoadingOverlay.show(context);
 
-    await getSiteList();
     await getSiteNameList();
+    await getSiteList();
     await getVehicleList();
 
     LoadingOverlay.hide();
@@ -50,10 +48,10 @@ class _Home_Dashboard_ScreenState extends ConsumerState<Home_Dashboard_Screen> {
   getSiteNameList() async {
     final apiService = ApiService(ref.read(dioProvider));
 
-    var formData = FormData.fromMap({"user_id": await getUserID()});
+    // var formData = FormData.fromMap({"user_id": await getUserID()});
 
-    final postResponse = await apiService.post<CommonListModel>(
-        ConstantApi.siteInfoUrl, formData);
+    final postResponse =
+        await apiService.post1<CommonListModel>(ConstantApi.siteInfoUrl);
     if (postResponse.success == true) {
       setState(() {
         sitenameData = postResponse.data!;

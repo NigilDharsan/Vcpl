@@ -4,6 +4,7 @@ import 'package:vcpl/Src/Models/CommonListModel.dart';
 import 'package:vcpl/Src/Models/CommonModel.dart';
 import 'package:vcpl/Src/Models/LoginModel.dart';
 import 'package:vcpl/Src/Models/VehicleModel.dart';
+import 'package:vcpl/Src/Utilits/ConstantsApi.dart';
 import 'package:vcpl/Src/Utilits/Generic.dart';
 
 final dioProvider = Provider<Dio>((ref) {
@@ -82,6 +83,14 @@ class ApiService {
     String path, {
     FormData? data,
   }) async {
+    _dio.options = BaseOptions(
+      baseUrl: ConstantApi.SERVER_ONE, // Your base URL
+      validateStatus: (status) {
+        // Return true if the status code is between 200 and 299 (inclusive)
+        // Return false if you want to throw an error for this status code
+        return status! >= 200 && status < 300 || status == 404;
+      },
+    );
     try {
       final response = await _dio.post(path, data: data);
 
@@ -94,6 +103,14 @@ class ApiService {
   }
 
   Future<T> _requestPOST1<T>(String path) async {
+    _dio.options = BaseOptions(
+      baseUrl: ConstantApi.SERVER_ONE, // Your base URL
+      validateStatus: (status) {
+        // Return true if the status code is between 200 and 299 (inclusive)
+        // Return false if you want to throw an error for this status code
+        return status! >= 200 && status < 300 || status == 404;
+      },
+    );
     try {
       final response = await _dio.post(path);
 
@@ -119,14 +136,81 @@ class ApiService {
 
   // API method for login endpoint without interceptor
   Future<T> login<T>(String path, FormData data) async {
+    Dio dio = Dio();
+
+    dio.options = BaseOptions(
+      baseUrl: ConstantApi.SERVER_ONE, // Your base URL
+      validateStatus: (status) {
+        // Return true if the status code is between 200 and 299 (inclusive)
+        // Return false if you want to throw an error for this status code
+        return status! >= 200 && status < 300 || status == 404;
+      },
+    );
+
     try {
-      Dio dio = Dio();
-      Response response = await dio.post(path, data: data);
+      Response response = await dio.post(ConstantApi.loginUrl, data: data);
+      // Handle successful response
+
+      print(response.data);
       return _fromJson<T>(response.data);
     } on DioException catch (e) {
-      return _fromJson<T>(e.response?.data);
-    } catch (error) {
-      throw Exception('Error logging in: $error');
+      if (e.response != null && e.response!.statusCode == 404) {
+        // Handle 404 error
+
+        print('Resource not found');
+        return _fromJson<T>(e.response!.data);
+      } else {
+        // Handle other Dio errors
+        print('Error: ${e.message}');
+        throw e;
+      }
     }
+
+    // try {
+    //   // Make API call using Dio
+    //   Dio dio = Dio();
+
+    //   dio.options.headers = {
+    //     'Accept': 'application/json',
+    //     'Content-Type': 'application/json',
+    //   };
+    //   dio.options.baseUrl = path;
+    //   print(path);
+
+    //   final response = await dio.post(path, data: data);
+
+    //   // Response response = await dio.post(path, data: data);
+    //   return _fromJson<T>(response.data);
+
+    //   // Handle successful response
+    //   // Do something with response data
+    // } catch (e) {
+    //   // Handle DioException
+    //   if (e is DioError) {
+    //     if (e.response?.statusCode == 404) {
+    //       // Handle 404 error
+    //       print('Resource not found');
+    //       return _fromJson<T>(e.response?.data);
+    //     } else {
+    //       // Handle other Dio errors
+    //       print('Error: ${e.message}');
+    //       return _fromJson<T>(e.response?.data);
+    //     }
+    //   } else {
+    //     // Handle other types of exceptions
+    //     print('Unexpected error: $e');
+    //     throw e;
+    //   }
+    // }
+
+    // try {
+    //   Dio dio = Dio();
+    //   Response response = await dio.post(path, data: data);
+    //   return _fromJson<T>(response.data);
+    // } on DioException catch (e) {
+    //   return _fromJson<T>(e.response?.data);
+    // } catch (error) {
+    //   throw Exception('Error logging in: $error');
+    // }
   }
 }
