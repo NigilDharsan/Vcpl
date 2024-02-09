@@ -103,9 +103,11 @@ class _Login_ScreenState extends ConsumerState<Login_Screen> {
                   textFormField2(
                       // isEnabled: false,
                       hintText: "Employee Id",
-                      keyboardtype: TextInputType.phone,
+                      keyboardtype: TextInputType.name,
                       Controller: _employeeId,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      inputFormatters: [
+                        FilteringTextInputFormatter.singleLineFormatter
+                      ],
                       onChanged: null,
                       validating: (value) {
                         if (value!.isEmpty) {
@@ -152,7 +154,7 @@ class _Login_ScreenState extends ConsumerState<Login_Screen> {
                           final apiService = ApiService(ref.read(dioProvider));
 
                           var formData = FormData.fromMap({
-                            "mobile": _employeeId.text,
+                            "emp_code": _employeeId.text,
                             "password": _password
                           });
                           final postResponse =
