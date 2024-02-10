@@ -8,6 +8,7 @@ import 'package:vcpl/Src/Common_Widgets/Text_Form_Field.dart';
 import 'package:vcpl/Src/Models/CommonListModel.dart';
 import 'package:vcpl/Src/Models/CommonModel.dart';
 import 'package:vcpl/Src/Models/VehicleModel.dart';
+import 'package:vcpl/Src/Pending_Transaction_Ui/Pending_Transaction_Screen.dart';
 import 'package:vcpl/Src/Utilits/ApiService.dart';
 import 'package:vcpl/Src/Utilits/Common_Colors.dart';
 import 'package:vcpl/Src/Utilits/ConstantsApi.dart';
@@ -80,7 +81,7 @@ class _Add_Centering_Transaction_ScreenState
     toSiteList = widget.siteListData.map((e) => e.siteName ?? "").toList();
     vechileNumberOtion =
         widget.vehicleListData.map((e) => e.vehicleNo ?? "").toList();
-
+    _openingBalance.text = "0";
     getMaterialNameList();
   }
 
@@ -118,6 +119,7 @@ class _Add_Centering_Transaction_ScreenState
       });
     } else {
       ShowToastMessage(postResponse.message ?? "");
+      _openingBalance.text = "0";
     }
   }
 
@@ -126,13 +128,25 @@ class _Add_Centering_Transaction_ScreenState
 
     final apiService = ApiService(ref.read(dioProvider));
 
-    final postResponse = await apiService.post<VehicleModel>(
+    final postResponse = await apiService.post<CommonModel>(
         ConstantApi.addCenteringTransaction, formData);
-    LoadingOverlay.hide();
+
     if (postResponse.success == true) {
-      ShowToastMessage(postResponse.message ?? "");
-      Navigator.pop(context);
+      LoadingOverlay.forcedStop();
+
+      if (trnsactionType == "Transfer Centering") {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    Pending_Transaction_Screen("Centering Transactions")));
+      } else {
+        ShowToastMessage(postResponse.message ?? "");
+        Navigator.pop(context);
+      }
     } else {
+      LoadingOverlay.hide();
+
       ShowToastMessage(postResponse.message ?? "");
     }
   }
@@ -177,9 +191,9 @@ class _Add_Centering_Transaction_ScreenState
                                         (value) => value.siteName == newValue);
 
                                 site_id = result.id.toString();
-                                LoadingOverlay.show(context);
 
                                 if (site_id != "" && material_id != "") {
+                                  LoadingOverlay.show(context);
                                   await getStocks(site_id, material_id);
                                   LoadingOverlay.hide();
                                 } else {
@@ -200,7 +214,7 @@ class _Add_Centering_Transaction_ScreenState
                           Container(
                             width: MediaQuery.of(context).size.width / 4.5,
                             child: textFormField2(
-                              // isEnabled: false,
+                              isEnabled: false,
                               hintText: "00",
                               keyboardtype: TextInputType.phone,
                               Controller: _openingBalance,
@@ -226,14 +240,13 @@ class _Add_Centering_Transaction_ScreenState
 
                       material_id = result.id.toString();
 
-                      LoadingOverlay.show(context);
-
                       if (site_id != "" && material_id != "") {
+                        LoadingOverlay.show(context);
+
                         await getStocks(site_id, material_id);
 
                         LoadingOverlay.hide();
                       } else {
-                        LoadingOverlay.hide();
                         setState(() {
                           materialName = newValue;
                         });
@@ -339,8 +352,8 @@ class _Add_Centering_Transaction_ScreenState
                         } else if (site_id == toSiteID) {
                           ShowToastMessage(
                               "To Site and Current Site should be different");
-                        } else if (int.parse(_Quantity.text) <
-                            int.parse(_openingBalance.text)) {
+                        } else if (!(int.parse(_Quantity.text) <=
+                            int.parse(_openingBalance.text))) {
                           ShowToastMessage(
                               "Quantity is Greater than Opening Balance");
                         } else {

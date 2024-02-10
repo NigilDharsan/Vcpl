@@ -60,6 +60,7 @@ class _Centering_TransactionState extends ConsumerState<Centering_Transaction> {
     super.initState();
 
     workTypeVal = widget.sitenameData.map((e) => e.siteName ?? "").toList();
+    _openingBalance.text = "0";
 
     getMaterialNameList();
   }
@@ -113,6 +114,7 @@ class _Centering_TransactionState extends ConsumerState<Centering_Transaction> {
         _openingBalance.text = postResponse.data!.stock.toString();
       });
     } else {
+      _openingBalance.text = "0";
       ShowToastMessage(postResponse.message ?? "");
     }
   }
@@ -159,12 +161,13 @@ class _Centering_TransactionState extends ConsumerState<Centering_Transaction> {
                                   (value) => value.siteName == newValue);
 
                               site_id = result.id.toString();
-                              LoadingOverlay.show(context);
-
-                              await getTransactionList(site_id);
 
                               if (site_id != "" && material_id != "") {
+                                LoadingOverlay.show(context);
+
                                 await getStocks(site_id, material_id);
+                                await getTransactionList(site_id);
+
                                 LoadingOverlay.hide();
                               } else {
                                 setState(() {
@@ -184,7 +187,7 @@ class _Centering_TransactionState extends ConsumerState<Centering_Transaction> {
                         Container(
                           width: MediaQuery.of(context).size.width / 4.5,
                           child: textFormField2(
-                            // isEnabled: false,
+                            isEnabled: false,
                             hintText: "00",
                             keyboardtype: TextInputType.phone,
                             Controller: _openingBalance,
@@ -210,16 +213,14 @@ class _Centering_TransactionState extends ConsumerState<Centering_Transaction> {
 
                     material_id = result.id.toString();
 
-                    LoadingOverlay.show(context);
-
-                    // await getTransactionList(site_id);
-
                     if (site_id != "" && material_id != "") {
+                      LoadingOverlay.show(context);
+
                       await getStocks(site_id, material_id);
+                      await getTransactionList(site_id);
 
                       LoadingOverlay.hide();
                     } else {
-                      LoadingOverlay.hide();
                       setState(() {
                         materialName = newValue;
                       });
@@ -249,9 +250,9 @@ class _Centering_TransactionState extends ConsumerState<Centering_Transaction> {
                         Container(
                             // height: MediaQuery.of(context).size.height / 1.7,
                             child: Padding(
-                              padding: const EdgeInsets.only(bottom: 15),
-                              child: _cementHistoryList(context, transactionList),
-                            )),
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: _cementHistoryList(context, transactionList),
+                        )),
                       ],
                     ),
                   ),

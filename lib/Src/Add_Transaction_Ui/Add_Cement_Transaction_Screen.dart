@@ -83,6 +83,7 @@ class _Add_Cement_Transaction_ScreenState
     toSiteList = widget.siteListData.map((e) => e.siteName ?? "").toList();
     vechileNumberOtion =
         widget.vehicleListData.map((e) => e.vehicleNo ?? "").toList();
+    _openingBalance.text = "0";
   }
 
   void getVehicleList() async {
@@ -115,6 +116,9 @@ class _Add_Cement_Transaction_ScreenState
       setState(() {
         _openingBalance.text = postResponse.data!.stock.toString();
       });
+    } else {
+      ShowToastMessage(postResponse.message ?? "");
+      _openingBalance.text = "0";
     }
   }
 
@@ -125,7 +129,8 @@ class _Add_Cement_Transaction_ScreenState
 
     final postResponse = await apiService.post<CommonModel>(
         ConstantApi.addCementTransaction, formData);
-    LoadingOverlay.hide();
+    LoadingOverlay.forcedStop();
+
     if (postResponse.success == true) {
       if (trnsactionType == "Transfer Cement") {
         Navigator.pushReplacement(
@@ -137,6 +142,8 @@ class _Add_Cement_Transaction_ScreenState
         ShowToastMessage(postResponse.message ?? "");
         Navigator.pop(context);
       }
+    } else {
+      ShowToastMessage(postResponse.message ?? "");
     }
   }
 
@@ -191,7 +198,7 @@ class _Add_Cement_Transaction_ScreenState
                         Container(
                           width: MediaQuery.of(context).size.width / 4.5,
                           child: textFormField2(
-                            // isEnabled: false,
+                            isEnabled: false,
                             hintText: "00",
                             keyboardtype: TextInputType.phone,
                             Controller: _openingBalance,
@@ -286,6 +293,11 @@ class _Add_Cement_Transaction_ScreenState
                             onChanged: (String? newValue) {
                               setState(() {
                                 toSiteValue = newValue;
+
+                                ListData result = widget.siteListData
+                                    .firstWhere(
+                                        (value) => value.siteName == newValue);
+                                toSiteID = "${result.id}";
                               });
                             },
                             hint: 'Select To Site',
@@ -322,7 +334,8 @@ class _Add_Cement_Transaction_ScreenState
                         : trnsactionType == "Received Cement"
                             ? Title_Style(Title: 'Vehicle No  ', isStatus: true)
                             : Container(),
-                    trnsactionType == "Transfer Cement"
+                    trnsactionType == "Transfer Cement" ||
+                            trnsactionType == "Received Cement"
                         ? dropDownField(
                             context,
                             value: vechileNumber,
@@ -330,23 +343,15 @@ class _Add_Cement_Transaction_ScreenState
                             onChanged: (String? newValue) {
                               setState(() {
                                 vechileNumber = newValue;
+                                VehicleData result = widget.vehicleListData
+                                    .firstWhere(
+                                        (value) => value.vehicleNo == newValue);
+                                vechileID = '${result.id}';
                               });
                             },
                             hint: 'Select Vechile',
                           )
-                        : trnsactionType == "Received Cement"
-                            ? dropDownField(
-                                context,
-                                value: vechileNumber,
-                                listValue: vechileNumberOtion,
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    vechileNumber = newValue;
-                                  });
-                                },
-                                hint: 'Select Vechile',
-                              )
-                            : Container(),
+                        : Container(),
                   ],
                 ),
                 //RECEIVED CEMENT
@@ -416,8 +421,8 @@ class _Add_Cement_Transaction_ScreenState
                         } else if (siteNameID == toSiteID) {
                           ShowToastMessage(
                               "To Site and Current Site should be different");
-                        } else if (int.parse(_Bags.text) <
-                            int.parse(_openingBalance.text)) {
+                        } else if (!(int.parse(_Bags.text) <=
+                            int.parse(_openingBalance.text))) {
                           ShowToastMessage(
                               "Quantity is Greater than Opening Balance");
                         } else {
@@ -439,8 +444,8 @@ class _Add_Cement_Transaction_ScreenState
                           ShowToastMessage("Choose Site Name");
                         } else if (vechileID == "") {
                           ShowToastMessage("Choose vehicle number");
-                        } else if (int.parse(_Bags.text) <
-                            int.parse(_openingBalance.text)) {
+                        } else if (!(int.parse(_Bags.text) <=
+                            int.parse(_openingBalance.text))) {
                           ShowToastMessage(
                               "Quantity is Greater than Opening Balance");
                         } else {
@@ -459,8 +464,8 @@ class _Add_Cement_Transaction_ScreenState
                       if (_formKey.currentState!.validate()) {
                         if (siteNameID == "") {
                           ShowToastMessage("Choose Site Name");
-                        } else if (int.parse(_Bags.text) <
-                            int.parse(_openingBalance.text)) {
+                        } else if (!(int.parse(_Bags.text) <=
+                            int.parse(_openingBalance.text))) {
                           ShowToastMessage(
                               "Quantity is Greater than Opening Balance");
                         } else {

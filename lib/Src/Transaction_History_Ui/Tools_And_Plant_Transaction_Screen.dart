@@ -10,6 +10,7 @@ import 'package:vcpl/Src/Models/CommonModel.dart';
 import 'package:vcpl/Src/Utilits/ApiService.dart';
 import 'package:vcpl/Src/Utilits/Common_Colors.dart';
 import 'package:vcpl/Src/Utilits/ConstantsApi.dart';
+import 'package:vcpl/Src/Utilits/Generic.dart';
 import 'package:vcpl/Src/Utilits/Loading_Overlay.dart';
 import 'package:vcpl/Src/Utilits/Text_Style.dart';
 
@@ -51,7 +52,7 @@ class _Tools_And_Plant_Transaction_ScreenState
 
   List<ListData> transactionList = [];
 
-  String stock_id = "";
+  String site_id = "";
   String material_id = "";
 
   @override
@@ -60,6 +61,7 @@ class _Tools_And_Plant_Transaction_ScreenState
     super.initState();
 
     workTypeVal = widget.sitenameData.map((e) => e.siteName ?? "").toList();
+    _openingBalance.text = "0";
 
     getMaterialNameList();
   }
@@ -109,6 +111,9 @@ class _Tools_And_Plant_Transaction_ScreenState
       setState(() {
         _openingBalance.text = postResponse.data!.stock.toString();
       });
+    } else {
+      _openingBalance.text = "0";
+      ShowToastMessage(postResponse.message ?? "");
     }
   }
 
@@ -147,15 +152,26 @@ class _Tools_And_Plant_Transaction_ScreenState
                           context,
                           value: workTypeOption,
                           listValue: workTypeVal,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              workTypeOption = newValue;
+                          onChanged: (String? newValue) async {
+                            ListData result = widget.sitenameData.firstWhere(
+                                (value) => value.siteName == newValue);
 
-                              ListData result = widget.sitenameData.firstWhere(
-                                  (value) => value.siteName == newValue);
+                            site_id = result.id.toString();
 
-                              stock_id = result.id.toString();
-                            });
+                            await getTransactionList(site_id);
+
+                            if (site_id != "" && material_id != "") {
+                              LoadingOverlay.show(context);
+
+                              await getTransactionList(site_id);
+
+                              await getStocks(site_id, material_id);
+                              LoadingOverlay.hide();
+                            } else {
+                              setState(() {
+                                workTypeOption = newValue;
+                              });
+                            }
                           },
                           hint: 'Site Name',
                         ),
@@ -169,7 +185,7 @@ class _Tools_And_Plant_Transaction_ScreenState
                       Container(
                         width: MediaQuery.of(context).size.width / 4.5,
                         child: textFormField2(
-                          // isEnabled: false,
+                          isEnabled: false,
                           hintText: "00",
                           keyboardtype: TextInputType.phone,
                           Controller: _openingBalance,
@@ -189,10 +205,24 @@ class _Tools_And_Plant_Transaction_ScreenState
                 context,
                 value: materialName,
                 listValue: materialNameOption,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    materialName = newValue;
-                  });
+                onChanged: (String? newValue) async {
+                  ListData result = materialData
+                      .firstWhere((value) => value.productName == newValue);
+
+                  material_id = result.id.toString();
+
+                  if (site_id != "" && material_id != "") {
+                    LoadingOverlay.show(context);
+
+                    await getStocks(site_id, material_id);
+                    await getTransactionList(site_id);
+
+                    LoadingOverlay.hide();
+                  } else {
+                    setState(() {
+                      materialName = newValue;
+                    });
+                  }
                 },
                 hint: 'Select Material Name',
               ),
@@ -217,9 +247,9 @@ class _Tools_And_Plant_Transaction_ScreenState
                       ),
                       Container(
                           child: Padding(
-                            padding: const EdgeInsets.only(bottom: 15),
-                            child: _cementHistoryList(context, transactionList),
-                          )),
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: _cementHistoryList(context, transactionList),
+                      )),
                     ],
                   ),
                 ),

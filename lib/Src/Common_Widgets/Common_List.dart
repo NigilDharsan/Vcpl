@@ -239,10 +239,11 @@ Widget Common_Transaction(context,
 }
 
 //PENDING TRANSACTION
-Widget Pending_Transaction(
-  context, {
-  required String isTag,
-}) {
+Widget Pending_Transaction(context,
+    {required String isTag,
+    required ListData pendingTrans,
+    void Function()? onPressAccept,
+    void Function()? onPressDecline}) {
   Color? containerColor;
   TextStyle? style;
   switch (isTag) {
@@ -285,7 +286,7 @@ Widget Pending_Transaction(
                     style: cardDetailT,
                   ),
                   Text(
-                    '10/12/2024',
+                    pendingTrans.createdAt ?? "",
                     style: DateT,
                   ),
                 ],
@@ -300,7 +301,7 @@ Widget Pending_Transaction(
                     style: cardDetailT,
                   ),
                   Text(
-                    'Cement',
+                    pendingTrans.siteName ?? "",
                     style: DateT,
                   ),
                 ],
@@ -317,31 +318,37 @@ Widget Pending_Transaction(
                 ),
                 Center(
                     child: Text(
-                  '24',
+                  '${pendingTrans.quantity ?? 0}',
                   style: TBlack,
                 )),
                 const Spacer(),
-                Container(
-                    alignment: Alignment.topLeft,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5), color: blue1),
-                    child: Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Icon(
-                          Icons.check,
-                          color: white1,
-                        ))),
-                Container(
-                    margin: EdgeInsets.only(left: 10),
-                    alignment: Alignment.topLeft,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5), color: red1),
-                    child: Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Icon(
-                          Icons.close,
-                          color: white1,
-                        ))),
+                InkWell(
+                  onTap: onPressAccept,
+                  child: Container(
+                      alignment: Alignment.topLeft,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5), color: blue1),
+                      child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Icon(
+                            Icons.check,
+                            color: white1,
+                          ))),
+                ),
+                InkWell(
+                  onTap: onPressDecline,
+                  child: Container(
+                      margin: EdgeInsets.only(left: 10),
+                      alignment: Alignment.topLeft,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5), color: red1),
+                      child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Icon(
+                            Icons.close,
+                            color: white1,
+                          ))),
+                ),
               ],
             ),
           ),

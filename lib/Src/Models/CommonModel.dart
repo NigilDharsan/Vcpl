@@ -47,7 +47,12 @@ class Data {
       this.materialId});
 
   Data.fromJson(Map<String, dynamic> json) {
-    ctid = json['ctid'];
+    if (json['ctid'] is String) {
+      ctid = int.parse(json['ctid']);
+    } else {
+      ctid = json['ctid'];
+    }
+
     toSiteId = json['to_site_id'];
     quantity = json['quantity'];
     transactionType = json['transaction_type'];

@@ -31,11 +31,11 @@ class Add_ToolsAndPlant_Transaction_Screen extends ConsumerStatefulWidget {
 
 class _Add_ToolsAndPlant_Transaction_ScreenState
     extends ConsumerState<Add_ToolsAndPlant_Transaction_Screen> {
-  String? trnsactionType = "";
+  String? trnsactionType;
   List<String> TransactionOtion = [
-    "Issued to Site",
     "Transfer Cement",
     "Received Cement",
+    "Issued to Site",
   ];
   String? workTypeOption;
 
@@ -83,6 +83,7 @@ class _Add_ToolsAndPlant_Transaction_ScreenState
     toSiteList = widget.siteListData.map((e) => e.siteName ?? "").toList();
     vechileNumberOtion =
         widget.vehicleListData.map((e) => e.vehicleNo ?? "").toList();
+    _openingBalance.text = "0";
 
     getMaterialNameList();
   }
@@ -121,6 +122,7 @@ class _Add_ToolsAndPlant_Transaction_ScreenState
       });
     } else {
       ShowToastMessage(postResponse.message ?? "");
+      _openingBalance.text = "0";
     }
   }
 
@@ -129,7 +131,7 @@ class _Add_ToolsAndPlant_Transaction_ScreenState
 
     final apiService = ApiService(ref.read(dioProvider));
 
-    final postResponse = await apiService.post<VehicleModel>(
+    final postResponse = await apiService.post<CommonModel>(
         ConstantApi.addToolsandplantsTransaction, formData);
     LoadingOverlay.hide();
     if (postResponse.success == true) {
@@ -207,7 +209,7 @@ class _Add_ToolsAndPlant_Transaction_ScreenState
                           Container(
                             width: MediaQuery.of(context).size.width / 4.5,
                             child: textFormField2(
-                              // isEnabled: false,
+                              isEnabled: false,
                               hintText: "00",
                               keyboardtype: TextInputType.phone,
                               Controller: _openingBalance,
@@ -346,8 +348,8 @@ class _Add_ToolsAndPlant_Transaction_ScreenState
                         } else if (site_id == toSiteID) {
                           ShowToastMessage(
                               "To Site and Current Site should be different");
-                        } else if (int.parse(_Quantity.text) <
-                            int.parse(_openingBalance.text)) {
+                        } else if (!(int.parse(_Quantity.text) <=
+                            int.parse(_openingBalance.text))) {
                           ShowToastMessage(
                               "Quantity is Greater than Opening Balance");
                         } else {

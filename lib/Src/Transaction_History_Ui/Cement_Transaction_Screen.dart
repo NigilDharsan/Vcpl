@@ -10,6 +10,7 @@ import 'package:vcpl/Src/Models/CommonModel.dart';
 import 'package:vcpl/Src/Utilits/ApiService.dart';
 import 'package:vcpl/Src/Utilits/Common_Colors.dart';
 import 'package:vcpl/Src/Utilits/ConstantsApi.dart';
+import 'package:vcpl/Src/Utilits/Generic.dart';
 import 'package:vcpl/Src/Utilits/Loading_Overlay.dart';
 import 'package:vcpl/Src/Utilits/Text_Style.dart';
 
@@ -35,6 +36,7 @@ class _Cement_TransactionState extends ConsumerState<Cement_Transaction> {
     // TODO: implement initState
     super.initState();
     sitename = widget.sitenameData.map((e) => e.siteName ?? "").toList();
+    _openingBalance.text = "0";
   }
 
   getTransactionList(String site_id) async {
@@ -64,6 +66,9 @@ class _Cement_TransactionState extends ConsumerState<Cement_Transaction> {
       setState(() {
         _openingBalance.text = postResponse.data!.stock.toString();
       });
+    } else {
+      _openingBalance.text = "0";
+      ShowToastMessage(postResponse.message ?? "");
     }
   }
 
@@ -164,9 +169,9 @@ class _Cement_TransactionState extends ConsumerState<Cement_Transaction> {
                         ),
                         Container(
                             child: Padding(
-                              padding: const EdgeInsets.only(bottom: 15),
-                              child: _cementHistoryList(context, transactionList),
-                            )),
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: _cementHistoryList(context, transactionList),
+                        )),
                       ],
                     ),
                   ),

@@ -31,11 +31,11 @@ class Add_Lorry_Transaction_Screen extends ConsumerStatefulWidget {
 
 class _Add_Lorry_Transaction_ScreenState
     extends ConsumerState<Add_Lorry_Transaction_Screen> {
-  String? trnsactionType = "";
+  String? trnsactionType;
   List<String> TransactionOtion = [
-    "Issued to Site",
     "Transfer lorry Items",
     "Received lorry Items",
+    "Issued to Site",
   ];
 
   String? workTypeOption;
@@ -86,6 +86,7 @@ class _Add_Lorry_Transaction_ScreenState
     toSiteList = widget.siteListData.map((e) => e.siteName ?? "").toList();
     vechileNumberOtion =
         widget.vehicleListData.map((e) => e.vehicleNo ?? "").toList();
+    _openingBalance.text = "0";
 
     getMaterialNameList();
   }
@@ -121,6 +122,7 @@ class _Add_Lorry_Transaction_ScreenState
       });
     } else {
       ShowToastMessage(postResponse.message ?? "");
+      _openingBalance.text = "0";
     }
   }
 
@@ -129,7 +131,7 @@ class _Add_Lorry_Transaction_ScreenState
 
     final apiService = ApiService(ref.read(dioProvider));
 
-    final postResponse = await apiService.post<VehicleModel>(
+    final postResponse = await apiService.post<CommonModel>(
         ConstantApi.add_lorry_transaction, formData);
     LoadingOverlay.hide();
     if (postResponse.success == true) {
@@ -203,7 +205,7 @@ class _Add_Lorry_Transaction_ScreenState
                         Container(
                           width: MediaQuery.of(context).size.width / 4.5,
                           child: textFormField2(
-                            // isEnabled: false,
+                            isEnabled: false,
                             hintText: "00",
                             keyboardtype: TextInputType.phone,
                             Controller: _openingBalance,
@@ -320,11 +322,11 @@ class _Add_Lorry_Transaction_ScreenState
                     trnsactionType == "Transfer lorry Items"
                         ? dropDownField(
                             context,
-                            value: workTypeOption,
-                            listValue: workTypeVal,
+                            value: toSiteValue,
+                            listValue: toSiteList,
                             onChanged: (String? newValue) {
                               setState(() {
-                                workTypeOption = newValue;
+                                toSiteValue = newValue;
                                 ListData result = widget.siteListData
                                     .firstWhere(
                                         (value) => value.siteName == newValue);
@@ -365,7 +367,8 @@ class _Add_Lorry_Transaction_ScreenState
                         : trnsactionType == "Received lorry Items"
                             ? Title_Style(Title: 'Vehicle No  ', isStatus: true)
                             : Container(),
-                    trnsactionType == "Transfer lorry Items"
+                    trnsactionType == "Transfer lorry Items" ||
+                            trnsactionType == "Received lorry Items"
                         ? dropDownField(
                             context,
                             value: vechileNumber,
@@ -373,27 +376,15 @@ class _Add_Lorry_Transaction_ScreenState
                             onChanged: (String? newValue) {
                               setState(() {
                                 vechileNumber = newValue;
+                                VehicleData result = widget.vehicleListData
+                                    .firstWhere(
+                                        (value) => value.vehicleNo == newValue);
+                                vechileID = '${result.id}';
                               });
                             },
                             hint: 'Select Vechile',
                           )
-                        : trnsactionType == "Received lorry Items"
-                            ? dropDownField(
-                                context,
-                                value: vechileNumber,
-                                listValue: vechileNumberOtion,
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    vechileNumber = newValue;
-                                    VehicleData result = widget.vehicleListData
-                                        .firstWhere((value) =>
-                                            value.vehicleNo == newValue);
-                                    vechileID = '${result.id}';
-                                  });
-                                },
-                                hint: 'Select Vechile',
-                              )
-                            : Container(),
+                        : Container(),
                   ],
                 ),
                 //RECEIVED CEMENT
@@ -425,9 +416,9 @@ class _Add_Lorry_Transaction_ScreenState
                 //SUBMIT BUTTON
                 Padding(
                   padding: const EdgeInsets.only(
-                      bottom: 100, top: 100, left: 30, right: 30),
+                      bottom: 50, top: 50, left: 30, right: 30),
                   child: CommonElevatedButton(context, 'Submit', () {
-                    if (trnsactionType == "Transfer Cement") {
+                    if (trnsactionType == "Transfer lorry Items") {
                       if (_formKey.currentState!.validate()) {
                         if (site_id == "") {
                           ShowToastMessage("Choose Site Name");
@@ -438,8 +429,8 @@ class _Add_Lorry_Transaction_ScreenState
                         } else if (site_id == toSiteID) {
                           ShowToastMessage(
                               "To Site and Current Site should be different");
-                        } else if (int.parse(_Bags.text) <
-                            int.parse(_openingBalance.text)) {
+                        } else if (!(int.parse(_Bags.text) <=
+                            int.parse(_openingBalance.text))) {
                           ShowToastMessage(
                               "Quantity is Greater than Opening Balance");
                         } else {
@@ -455,14 +446,14 @@ class _Add_Lorry_Transaction_ScreenState
                           addCementTransaction(formData);
                         }
                       }
-                    } else if (trnsactionType == "Received Cement") {
+                    } else if (trnsactionType == "Received lorry Items") {
                       if (_formKey.currentState!.validate()) {
                         if (site_id == "") {
                           ShowToastMessage("Choose Site Name");
                         } else if (vechileID == "") {
                           ShowToastMessage("Choose vehicle number");
-                        } else if (int.parse(_Bags.text) <
-                            int.parse(_openingBalance.text)) {
+                        } else if (!(int.parse(_Bags.text) <=
+                            int.parse(_openingBalance.text))) {
                           ShowToastMessage(
                               "Quantity is Greater than Opening Balance");
                         } else {
@@ -481,8 +472,8 @@ class _Add_Lorry_Transaction_ScreenState
                       if (_formKey.currentState!.validate()) {
                         if (site_id == "") {
                           ShowToastMessage("Choose Site Name");
-                        } else if (int.parse(_Bags.text) <
-                            int.parse(_openingBalance.text)) {
+                        } else if (!(int.parse(_Bags.text) <=
+                            int.parse(_openingBalance.text))) {
                           ShowToastMessage(
                               "Quantity is Greater than Opening Balance");
                         } else {

@@ -26,11 +26,28 @@ class _Home_Dashboard_ScreenState extends ConsumerState<Home_Dashboard_Screen> {
   List<ListData> sitenameData = [];
   List<ListData> siteListData = [];
   List<VehicleData> vechileNumberOtion = [];
+  List<Permissions> permissionsListArr = [];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    for (int i = 0; i < (widget.permissionsList?.length ?? 0); i++) {
+      var obj = widget.permissionsList?[i].name;
+
+      if (obj == "Cement Transactions") {
+        permissionsListArr.add(widget.permissionsList![i]);
+      } else if (obj == "Centering Transactions") {
+        permissionsListArr.add(widget.permissionsList![i]);
+      } else if (obj == "ToolsandPlants Transactions") {
+        permissionsListArr.add(widget.permissionsList![i]);
+      } else if (obj == "Lorry Transactions") {
+        permissionsListArr.add(widget.permissionsList![i]);
+      } else if (obj == "Labours Assigning") {
+        permissionsListArr.add(widget.permissionsList![i]);
+      }
+    }
 
     initalApiCalls();
   }
@@ -119,8 +136,8 @@ class _Home_Dashboard_ScreenState extends ConsumerState<Home_Dashboard_Screen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 35),
-                  child: DashBoard_List(widget.permissionsList ?? [],
-                      sitenameData, siteListData, vechileNumberOtion),
+                  child: DashBoard_List(permissionsListArr ?? [], sitenameData,
+                      siteListData, vechileNumberOtion),
                 ),
                 // //Cement Transactions && Labours Assigning
                 // Padding(

@@ -1,9 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vcpl/Src/Common_Widgets/Common_List.dart';
 import 'package:vcpl/Src/Common_Widgets/Custom_App_Bar.dart';
 import 'package:vcpl/Src/Common_Widgets/Text_Form_Field.dart';
 import 'package:vcpl/Src/Models/CommonListModel.dart';
+import 'package:vcpl/Src/Models/CommonModel.dart';
 import 'package:vcpl/Src/Utilits/ApiService.dart';
 import 'package:vcpl/Src/Utilits/Common_Colors.dart';
 import 'package:vcpl/Src/Utilits/ConstantsApi.dart';
@@ -23,13 +25,13 @@ class Pending_Transaction_Screen extends ConsumerStatefulWidget {
 class _Pending_Transaction_ScreenState
     extends ConsumerState<Pending_Transaction_Screen> {
   List<ListData> pendingApprovalList = [];
+  String urlType = "";
+  String acceptUrlType = "";
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    String urlType = "";
 
     if (widget.pendingType == "Cement Transactions") {
       urlType = ConstantApi.pendingApprovalCementTransactions;
@@ -40,17 +42,14 @@ class _Pending_Transaction_ScreenState
     } else if (widget.pendingType == "Lorry Transactions") {
       urlType = ConstantApi.pending_approval_lorry_transactions;
     }
-
+    LoadingOverlay.show(context);
     getPendingList(urlType);
   }
 
   getPendingList(String url) async {
-    LoadingOverlay.show(context);
-
     final apiService = ApiService(ref.read(dioProvider));
 
-    final postResponse = await apiService
-        .post1<CommonListModel>(ConstantApi.pendingApprovalCementTransactions);
+    final postResponse = await apiService.post1<CommonListModel>(url);
     LoadingOverlay.hide();
 
     if (postResponse.success == true) {
@@ -59,9 +58,47 @@ class _Pending_Transaction_ScreenState
           pendingApprovalList = postResponse.data!;
         });
       } else {
+        setState(() {
+          pendingApprovalList = [];
+        });
         ShowToastMessage("No Pending Action");
       }
     } else {}
+  }
+
+  acceptApicall(String url, FormData formData) async {
+    LoadingOverlay.show(context);
+
+    final apiService = ApiService(ref.read(dioProvider));
+
+    final postResponse = await apiService.post<CommonModel>(url, formData);
+
+    if (postResponse.success == true) {
+      ShowToastMessage(postResponse.message ?? "");
+
+      getPendingList(urlType);
+    } else {
+      LoadingOverlay.hide();
+      ShowToastMessage(postResponse.message ?? "");
+    }
+  }
+
+  declineApicall(String url, FormData formData) async {
+    LoadingOverlay.show(context);
+
+    final apiService = ApiService(ref.read(dioProvider));
+
+    final postResponse = await apiService.post<CommonModel>(url, formData);
+
+    if (postResponse.success == true) {
+      ShowToastMessage(postResponse.message ?? "");
+
+      getPendingList(urlType);
+    } else {
+      LoadingOverlay.hide();
+
+      ShowToastMessage(postResponse.message ?? "");
+    }
   }
 
   @override
@@ -102,6 +139,59 @@ class _Pending_Transaction_ScreenState
                     return Pending_Transaction(
                       context,
                       isTag: 'Issued',
+                      onPressAccept: () {
+                        if (widget.pendingType == "Cement Transactions") {
+                          acceptUrlType = ConstantApi.acceptCementTransaction;
+                        } else if (widget.pendingType ==
+                            "Centering Transactions") {
+                          acceptUrlType =
+                              ConstantApi.acceptCenteringTransaction;
+                        } else if (widget.pendingType ==
+                            "ToolsandPlants Transactions") {
+                          acceptUrlType =
+                              ConstantApi.accept_toolsandplants_transaction;
+                        } else if (widget.pendingType == "Lorry Transactions") {
+                          acceptUrlType = ConstantApi.accept_lorry_transaction;
+                        }
+
+                        final getObj = pendingApprovalList[index];
+
+                        var formData = FormData.fromMap({
+                          "to_site_id": getObj.toSiteId,
+                          "quantity": getObj.quantity,
+                          "ctid": getObj.ctid,
+                          "material_id": getObj.materialId
+                        });
+
+                        acceptApicall(acceptUrlType, formData);
+                      },
+                      onPressDecline: () {
+                        if (widget.pendingType == "Cement Transactions") {
+                          acceptUrlType = ConstantApi.declineCementTransaction;
+                        } else if (widget.pendingType ==
+                            "Centering Transactions") {
+                          acceptUrlType =
+                              ConstantApi.declineCenteringTransaction;
+                        } else if (widget.pendingType ==
+                            "ToolsandPlants Transactions") {
+                          acceptUrlType =
+                              ConstantApi.decline_toolsandplants_transaction;
+                        } else if (widget.pendingType == "Lorry Transactions") {
+                          acceptUrlType = ConstantApi.decline_lorry_transaction;
+                        }
+
+                        final getObj = pendingApprovalList[index];
+
+                        var formData = FormData.fromMap({
+                          "site_id": getObj.toSiteId,
+                          "quantity": getObj.quantity,
+                          "ctid": getObj.ctid,
+                          "material_id": getObj.materialId
+                        });
+
+                        declineApicall(acceptUrlType, formData);
+                      },
+                      pendingTrans: pendingApprovalList[index],
                     );
                   },
                 )),

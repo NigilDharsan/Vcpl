@@ -10,6 +10,7 @@ import 'package:vcpl/Src/Models/CommonModel.dart';
 import 'package:vcpl/Src/Utilits/ApiService.dart';
 import 'package:vcpl/Src/Utilits/Common_Colors.dart';
 import 'package:vcpl/Src/Utilits/ConstantsApi.dart';
+import 'package:vcpl/Src/Utilits/Generic.dart';
 import 'package:vcpl/Src/Utilits/Loading_Overlay.dart';
 import 'package:vcpl/Src/Utilits/Text_Style.dart';
 
@@ -49,7 +50,7 @@ class _Lorry_Transaction_ScreenState
   TextEditingController _openingBalance = TextEditingController();
   List<ListData> transactionList = [];
 
-  String stock_id = "";
+  String site_id = "";
   String material_id = "";
 
   @override
@@ -58,6 +59,7 @@ class _Lorry_Transaction_ScreenState
     super.initState();
 
     workTypeVal = widget.sitenameData.map((e) => e.siteName ?? "").toList();
+    _openingBalance.text = "0";
 
     getMaterialNameList();
   }
@@ -95,17 +97,21 @@ class _Lorry_Transaction_ScreenState
     }
   }
 
-  getStocks(String site_id) async {
+  getStocks(String site_id, String material_id) async {
     final apiService = ApiService(ref.read(dioProvider));
 
-    var formData = FormData.fromMap({"site_id": site_id});
+    var formData =
+        FormData.fromMap({"site_id": site_id, "material_id": material_id});
 
     final postResponse = await apiService.post<CommonModel>(
-        ConstantApi.get_lorry_stocks, formData);
-    if (postResponse.success == true) {
+        ConstantApi.getCenteringStocks, formData);
+    if (postResponse.success == true && postResponse.data != null) {
       setState(() {
         _openingBalance.text = postResponse.data!.stock.toString();
       });
+    } else {
+      _openingBalance.text = "0";
+      ShowToastMessage(postResponse.message ?? "");
     }
   }
 
@@ -144,15 +150,24 @@ class _Lorry_Transaction_ScreenState
                           context,
                           value: workTypeOption,
                           listValue: workTypeVal,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              workTypeOption = newValue;
+                          onChanged: (String? newValue) async {
+                            ListData result = widget.sitenameData.firstWhere(
+                                (value) => value.siteName == newValue);
 
-                              ListData result = widget.sitenameData.firstWhere(
-                                  (value) => value.siteName == newValue);
+                            site_id = result.id.toString();
 
-                              stock_id = result.id.toString();
-                            });
+                            if (site_id != "" && material_id != "") {
+                              LoadingOverlay.show(context);
+
+                              await getStocks(site_id, material_id);
+                              await getTransactionList(site_id);
+
+                              LoadingOverlay.hide();
+                            } else {
+                              setState(() {
+                                workTypeOption = newValue;
+                              });
+                            }
                           },
                           hint: 'Site Name',
                         ),
@@ -166,7 +181,7 @@ class _Lorry_Transaction_ScreenState
                       Container(
                         width: MediaQuery.of(context).size.width / 4.5,
                         child: textFormField2(
-                          // isEnabled: false,
+                          isEnabled: false,
                           hintText: "00",
                           keyboardtype: TextInputType.phone,
                           Controller: _openingBalance,
@@ -186,10 +201,24 @@ class _Lorry_Transaction_ScreenState
                 context,
                 value: materialName,
                 listValue: materialNameOption,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    materialName = newValue;
-                  });
+                onChanged: (String? newValue) async {
+                  ListData result = materialData
+                      .firstWhere((value) => value.productName == newValue);
+
+                  material_id = result.id.toString();
+
+                  if (site_id != "" && material_id != "") {
+                    LoadingOverlay.show(context);
+
+                    await getStocks(site_id, material_id);
+                    await getTransactionList(site_id);
+
+                    LoadingOverlay.hide();
+                  } else {
+                    setState(() {
+                      materialName = newValue;
+                    });
+                  }
                 },
                 hint: 'Select Material Name',
               ),
@@ -215,9 +244,9 @@ class _Lorry_Transaction_ScreenState
                       Container(
                           // height: MediaQuery.of(context).size.height / 1.7,
                           child: Padding(
-                            padding: const EdgeInsets.only(bottom: 15),
-                            child: _cementHistoryList(context, materialData),
-                          )),
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: _cementHistoryList(context, transactionList),
+                      )),
                     ],
                   ),
                 ),
