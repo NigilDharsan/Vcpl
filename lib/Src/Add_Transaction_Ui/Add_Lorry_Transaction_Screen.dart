@@ -8,6 +8,7 @@ import 'package:vcpl/Src/Common_Widgets/Text_Form_Field.dart';
 import 'package:vcpl/Src/Models/CommonListModel.dart';
 import 'package:vcpl/Src/Models/CommonModel.dart';
 import 'package:vcpl/Src/Models/VehicleModel.dart';
+import 'package:vcpl/Src/Pending_Transaction_Ui/Pending_Transaction_Screen.dart';
 import 'package:vcpl/Src/Utilits/ApiService.dart';
 import 'package:vcpl/Src/Utilits/Common_Colors.dart';
 import 'package:vcpl/Src/Utilits/ConstantsApi.dart';
@@ -115,7 +116,7 @@ class _Add_Lorry_Transaction_ScreenState
         FormData.fromMap({"site_id": site_id, "material_id": material_id});
 
     final postResponse = await apiService.post<CommonModel>(
-        ConstantApi.getCenteringStocks, formData);
+        ConstantApi.get_lorry_stocks, formData);
     if (postResponse.success == true && postResponse.data != null) {
       setState(() {
         _openingBalance.text = postResponse.data!.stock.toString();
@@ -133,10 +134,19 @@ class _Add_Lorry_Transaction_ScreenState
 
     final postResponse = await apiService.post<CommonModel>(
         ConstantApi.add_lorry_transaction, formData);
-    LoadingOverlay.hide();
+    LoadingOverlay.forcedStop();
     if (postResponse.success == true) {
-      ShowToastMessage(postResponse.message ?? "");
-      Navigator.pop(context);
+      // ShowToastMessage(postResponse.message ?? "");
+      if (trnsactionType == "Transfer lorry Items") {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    Pending_Transaction_Screen("Lorry Transactions")));
+      } else {
+        ShowToastMessage(postResponse.message ?? "");
+        Navigator.pop(context);
+      }
     } else {
       ShowToastMessage(postResponse.message ?? "");
     }
@@ -422,6 +432,8 @@ class _Add_Lorry_Transaction_ScreenState
                       if (_formKey.currentState!.validate()) {
                         if (site_id == "") {
                           ShowToastMessage("Choose Site Name");
+                        } else if (material_id == "") {
+                          ShowToastMessage("Choose material name");
                         } else if (vechileID == "") {
                           ShowToastMessage("Choose vehicle number");
                         } else if (toSiteID == "") {
@@ -440,7 +452,8 @@ class _Add_Lorry_Transaction_ScreenState
                             "quantity": _Bags.text,
                             "to_site_id": toSiteID,
                             "transfer_slip_no": _transferSlipNo.text,
-                            "vehicle_id": vechileID
+                            "vehicle_id": vechileID,
+                            "material_id": material_id
                           });
 
                           addCementTransaction(formData);
@@ -463,7 +476,8 @@ class _Add_Lorry_Transaction_ScreenState
                             "quantity": _Bags.text,
                             "bill_no": _transferSlipNo.text,
                             "grand_and_brand": _Grade.text,
-                            "vehicle_id": vechileID
+                            "vehicle_id": vechileID,
+                            "material_id": material_id
                           });
                           addCementTransaction(formData);
                         }
@@ -480,6 +494,7 @@ class _Add_Lorry_Transaction_ScreenState
                           var formData = FormData.fromMap({
                             "transaction_type": 3,
                             "current_site_id": site_id,
+                            "material_id": material_id,
                             "quantity": _Bags.text,
                             "issued_purpose": _Purpose.text
                           });

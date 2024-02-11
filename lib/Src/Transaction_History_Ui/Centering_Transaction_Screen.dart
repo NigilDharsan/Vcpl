@@ -92,13 +92,16 @@ class _Centering_TransactionState extends ConsumerState<Centering_Transaction> {
 
     final postResponse = await apiService.post<CommonListModel>(
         ConstantApi.centeringTransactionList, formData);
-    LoadingOverlay.hide();
 
     if (postResponse.success == true) {
       setState(() {
         transactionList = postResponse.data!;
       });
-    } else {}
+    } else {
+      setState(() {
+        transactionList = [];
+      });
+    }
   }
 
   getStocks(String site_id, String material_id) async {
@@ -161,15 +164,17 @@ class _Centering_TransactionState extends ConsumerState<Centering_Transaction> {
                                   (value) => value.siteName == newValue);
 
                               site_id = result.id.toString();
+                              LoadingOverlay.show(context);
+
+                              await getTransactionList(site_id);
 
                               if (site_id != "" && material_id != "") {
-                                LoadingOverlay.show(context);
-
                                 await getStocks(site_id, material_id);
-                                await getTransactionList(site_id);
 
                                 LoadingOverlay.hide();
                               } else {
+                                LoadingOverlay.hide();
+
                                 setState(() {
                                   workTypeOption = newValue;
                                 });
@@ -217,7 +222,6 @@ class _Centering_TransactionState extends ConsumerState<Centering_Transaction> {
                       LoadingOverlay.show(context);
 
                       await getStocks(site_id, material_id);
-                      await getTransactionList(site_id);
 
                       LoadingOverlay.hide();
                     } else {

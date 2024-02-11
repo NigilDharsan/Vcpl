@@ -51,7 +51,9 @@ class _Cement_TransactionState extends ConsumerState<Cement_Transaction> {
         transactionList = postResponse.data!;
       });
     } else {
-      LoadingOverlay.hide();
+      setState(() {
+        transactionList = [];
+      });
     }
   }
 

@@ -89,13 +89,15 @@ class _Tools_And_Plant_Transaction_ScreenState
     var formData = FormData.fromMap({"current_site_id": site_id});
 
     final postResponse = await apiService.post<CommonListModel>(
-        ConstantApi.cementTransactionList, formData);
+        ConstantApi.toolsandplants_transaction_list, formData);
     if (postResponse.success == true) {
       setState(() {
         transactionList = postResponse.data!;
       });
     } else {
-      LoadingOverlay.hide();
+      setState(() {
+        transactionList = [];
+      });
     }
   }
 
@@ -157,17 +159,16 @@ class _Tools_And_Plant_Transaction_ScreenState
                                 (value) => value.siteName == newValue);
 
                             site_id = result.id.toString();
+                            LoadingOverlay.show(context);
 
                             await getTransactionList(site_id);
 
                             if (site_id != "" && material_id != "") {
-                              LoadingOverlay.show(context);
-
-                              await getTransactionList(site_id);
-
                               await getStocks(site_id, material_id);
                               LoadingOverlay.hide();
                             } else {
+                              LoadingOverlay.hide();
+
                               setState(() {
                                 workTypeOption = newValue;
                               });
@@ -215,7 +216,6 @@ class _Tools_And_Plant_Transaction_ScreenState
                     LoadingOverlay.show(context);
 
                     await getStocks(site_id, material_id);
-                    await getTransactionList(site_id);
 
                     LoadingOverlay.hide();
                   } else {

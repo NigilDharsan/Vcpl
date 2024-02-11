@@ -93,7 +93,9 @@ class _Lorry_Transaction_ScreenState
         transactionList = postResponse.data!;
       });
     } else {
-      LoadingOverlay.hide();
+      setState(() {
+        transactionList = [];
+      });
     }
   }
 
@@ -155,15 +157,17 @@ class _Lorry_Transaction_ScreenState
                                 (value) => value.siteName == newValue);
 
                             site_id = result.id.toString();
+                            LoadingOverlay.show(context);
+
+                            await getTransactionList(site_id);
 
                             if (site_id != "" && material_id != "") {
-                              LoadingOverlay.show(context);
-
                               await getStocks(site_id, material_id);
-                              await getTransactionList(site_id);
 
                               LoadingOverlay.hide();
                             } else {
+                              LoadingOverlay.hide();
+
                               setState(() {
                                 workTypeOption = newValue;
                               });
@@ -211,7 +215,6 @@ class _Lorry_Transaction_ScreenState
                     LoadingOverlay.show(context);
 
                     await getStocks(site_id, material_id);
-                    await getTransactionList(site_id);
 
                     LoadingOverlay.hide();
                   } else {

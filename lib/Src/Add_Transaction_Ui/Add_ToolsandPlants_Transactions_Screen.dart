@@ -8,6 +8,7 @@ import 'package:vcpl/Src/Common_Widgets/Text_Form_Field.dart';
 import 'package:vcpl/Src/Models/CommonListModel.dart';
 import 'package:vcpl/Src/Models/CommonModel.dart';
 import 'package:vcpl/Src/Models/VehicleModel.dart';
+import 'package:vcpl/Src/Pending_Transaction_Ui/Pending_Transaction_Screen.dart';
 import 'package:vcpl/Src/Utilits/ApiService.dart';
 import 'package:vcpl/Src/Utilits/Common_Colors.dart';
 import 'package:vcpl/Src/Utilits/ConstantsApi.dart';
@@ -33,9 +34,7 @@ class _Add_ToolsAndPlant_Transaction_ScreenState
     extends ConsumerState<Add_ToolsAndPlant_Transaction_Screen> {
   String? trnsactionType;
   List<String> TransactionOtion = [
-    "Transfer Cement",
-    "Received Cement",
-    "Issued to Site",
+    "Transfer ToolsandPlants",
   ];
   String? workTypeOption;
 
@@ -115,7 +114,7 @@ class _Add_ToolsAndPlant_Transaction_ScreenState
         FormData.fromMap({"site_id": site_id, "material_id": material_id});
 
     final postResponse = await apiService.post<CommonModel>(
-        ConstantApi.getCenteringStocks, formData);
+        ConstantApi.getToolsandplantsStocks, formData);
     if (postResponse.success == true && postResponse.data != null) {
       setState(() {
         _openingBalance.text = postResponse.data!.stock.toString();
@@ -133,10 +132,13 @@ class _Add_ToolsAndPlant_Transaction_ScreenState
 
     final postResponse = await apiService.post<CommonModel>(
         ConstantApi.addToolsandplantsTransaction, formData);
-    LoadingOverlay.hide();
+    LoadingOverlay.forcedStop();
     if (postResponse.success == true) {
-      ShowToastMessage(postResponse.message ?? "");
-      Navigator.pop(context);
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  Pending_Transaction_Screen("ToolsandPlants Transactions")));
     } else {
       ShowToastMessage(postResponse.message ?? "");
     }
@@ -339,6 +341,8 @@ class _Add_ToolsAndPlant_Transaction_ScreenState
                       if (_formKey.currentState!.validate()) {
                         if (site_id == "") {
                           ShowToastMessage("Choose Site Name");
+                        } else if (trnsactionType == null) {
+                          ShowToastMessage("Choose Transaction Type");
                         } else if (vechileID == "") {
                           ShowToastMessage("Choose vehicle number");
                         } else if (toSiteID == "") {
