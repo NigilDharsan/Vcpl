@@ -38,6 +38,7 @@ class _Add_Labours_Assigning_ScreenState
         laboursCategoryList[index].labourCount -= 1;
     });
   }
+  TextEditingController _labourCount = TextEditingController();
 
   String? site_id = "";
 
@@ -266,39 +267,58 @@ class _Add_Labours_Assigning_ScreenState
                   )),
               const Spacer(),
               Container(
-                alignment: Alignment.topLeft,
-                margin: EdgeInsets.only(right: 20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: white1,
-                ),
-                child: Row(
-                  children: [
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(top: 10, bottom: 10, left: 10),
-                      child: InkWell(
-                          onTap: () {
-                            _decrementFunction(index);
-                          },
-                          child: ImgPathSvg('down.svg')),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Text('${laboursCategoryList[index].labourCount}'),
-                    ),
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(right: 10, top: 10, bottom: 10),
-                      child: InkWell(
-                          onTap: () {
-                            _incrementFunction(index);
-                          },
-                          child: ImgPathSvg('up.svg')),
-                    ),
-                  ],
+                width: MediaQuery.of(context).size.width/5.5,
+                child: textFormField(
+                  hintText: '00',
+                  keyboardtype: TextInputType.number,
+                  inputFormatters: null,
+                  Controller: _labourCount,
+                  validating: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Please Enter Valid${'Number'}";
+                    }
+                    if (value == null) {
+                      return "Please Enter Valid${'Number'}";
+                    }
+                    return null;
+                  },
+                  onChanged: null,
                 ),
               ),
+              // Container(
+              //   alignment: Alignment.topLeft,
+              //   margin: EdgeInsets.only(right: 20),
+              //   decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.circular(5),
+              //     color: white1,
+              //   ),
+              //   child: Row(
+              //     children: [
+              //       Padding(
+              //         padding:
+              //             const EdgeInsets.only(top: 10, bottom: 10, left: 10),
+              //         child: InkWell(
+              //             onTap: () {
+              //               _decrementFunction(index);
+              //             },
+              //             child: ImgPathSvg('down.svg')),
+              //       ),
+              //       Padding(
+              //         padding: const EdgeInsets.all(10),
+              //         child: Text('${laboursCategoryList[index].labourCount}'),
+              //       ),
+              //       Padding(
+              //         padding:
+              //             const EdgeInsets.only(right: 10, top: 10, bottom: 10),
+              //         child: InkWell(
+              //             onTap: () {
+              //               _incrementFunction(index);
+              //             },
+              //             child: ImgPathSvg('up.svg')),
+              //       ),
+              //     ],
+              //   ),
+              // ),
             ],
           ),
         );

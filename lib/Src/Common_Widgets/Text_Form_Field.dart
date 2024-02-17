@@ -23,7 +23,7 @@ Widget textFormField(
       inputFormatters: inputFormatters,
       validator: validating,
       decoration: InputDecoration(
-        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0,),
         hintText: hintText,
         hintStyle: phoneHT,
         border: OutlineInputBorder(
