@@ -10,7 +10,6 @@ import 'package:vcpl/Src/Utilits/ApiService.dart';
 import 'package:vcpl/Src/Utilits/Common_Colors.dart';
 import 'package:vcpl/Src/Utilits/ConstantsApi.dart';
 import 'package:vcpl/Src/Utilits/Generic.dart';
-import 'package:vcpl/Src/Utilits/Image_Path.dart';
 import 'package:vcpl/Src/Utilits/Loading_Overlay.dart';
 import 'package:vcpl/Src/utilits/Text_Style.dart';
 
@@ -38,6 +37,7 @@ class _Add_Labours_Assigning_ScreenState
         laboursCategoryList[index].labourCount -= 1;
     });
   }
+
   TextEditingController _labourCount = TextEditingController();
 
   String? site_id = "";
@@ -123,120 +123,127 @@ class _Add_Labours_Assigning_ScreenState
           actions: null,
           isBlue: true,
           isNav: true),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              //SITE NAME
-              Title_Style(Title: 'Site Name ', isStatus: true),
-              dropDownField(
-                context,
-                value: selectSite,
-                listValue: selectSiteOption,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectSite = newValue;
-                    ListData result = widget.siteListData
-                        .firstWhere((value) => value.siteName == newValue);
-                    site_id = '${result.id ?? 0}';
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(FocusNode());
+        },
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 20, right: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                //SITE NAME
+                Title_Style(Title: 'Site Name ', isStatus: true),
+                dropDownField(
+                  context,
+                  value: selectSite,
+                  listValue: selectSiteOption,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectSite = newValue;
+                      ListData result = widget.siteListData
+                          .firstWhere((value) => value.siteName == newValue);
+                      site_id = '${result.id ?? 0}';
 
-                    subContractorOption.add(result.subContractor ?? "");
-                    subContractor = result.subContractor ?? "";
-                    subContractor_id = '${result.subContractorId ?? 0}';
-                  });
-                },
-                hint: 'Select Site',
-              ),
-              //SUB CONTRACTOR
-              Title_Style(Title: 'Sub Contractor ', isStatus: true),
-              dropDownField(
-                context,
-                value: subContractor,
-                listValue: subContractorOption,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    subContractor = newValue;
-
-                    ListData result = widget.siteListData
-                        .firstWhere((value) => value.subContractor == newValue);
-                    subContractor_id = '${result.subContractorId ?? 0}';
-                  });
-                },
-                hint: 'Select Sub Contractor',
-              ),
-              //SUB CONTRACTOR
-              Title_Style(Title: 'Shift ', isStatus: true),
-              dropDownField(
-                context,
-                value: shift,
-                listValue: shiftOption,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    shift = newValue;
-                    shift_id = newValue;
-                  });
-                },
-                hint: 'Select',
-              ),
-
-              //LIST OF LABOUR CATEGORY
-              Padding(
-                padding: const EdgeInsets.only(top: 25),
-                child: Row(
-                  children: [
-                    Text(
-                      'Labour Category',
-                      style: Textfield_Style2,
-                    ),
-                    const Spacer(),
-                    Text(
-                      'No of Labours',
-                      style: Textfield_Style2,
-                    ),
-                  ],
-                ),
-              ),
-
-              Container(child: _Labour_Assigning_List()),
-
-              //SUBMIT BUTTON
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 50, bottom: 50, left: 30, right: 30),
-                child: CommonElevatedButton(context, 'Submit', () {
-                  if (site_id == "") {
-                    ShowToastMessage("Choose Site Name");
-                  } else if (shift_id == "") {
-                    ShowToastMessage("Choose shift time");
-                  } else {
-                    var formData = FormData.fromMap({
-                      "site_id": site_id,
-                      "sub_contractor_id": 113,
-                      "shift_id": shift == "6AM-9AM"
-                          ? 1
-                          : shift == "9AM-6PM"
-                              ? 2
-                              : shift == "After 7PM"
-                                  ? 3
-                                  : 1
+                      subContractorOption.add(result.subContractor ?? "");
+                      subContractor = result.subContractor ?? "";
+                      subContractor_id = '${result.subContractorId ?? 0}';
                     });
+                  },
+                  hint: 'Select Site',
+                ),
+                //SUB CONTRACTOR
+                Title_Style(Title: 'Sub Contractor ', isStatus: true),
+                dropDownField(
+                  context,
+                  value: subContractor,
+                  listValue: subContractorOption,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      subContractor = newValue;
 
-                    for (int i = 0; i < 5; i++) {
-                      var obj = laboursCategoryList[i].labourCount;
-                      if (obj > 0) {
-                        formData.fields.add(
-                            MapEntry('labours_count[$i][labours]', '$obj'));
+                      ListData result = widget.siteListData.firstWhere(
+                          (value) => value.subContractor == newValue);
+                      subContractor_id = '${result.subContractorId ?? 0}';
+                    });
+                  },
+                  hint: 'Select Sub Contractor',
+                ),
+                //SUB CONTRACTOR
+                Title_Style(Title: 'Shift ', isStatus: true),
+                dropDownField(
+                  context,
+                  value: shift,
+                  listValue: shiftOption,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      shift = newValue;
+                      shift_id = newValue;
+                    });
+                  },
+                  hint: 'Select',
+                ),
+
+                //LIST OF LABOUR CATEGORY
+                Padding(
+                  padding: const EdgeInsets.only(top: 25),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Labour Category',
+                        style: Textfield_Style2,
+                      ),
+                      const Spacer(),
+                      Text(
+                        'No of Labours',
+                        style: Textfield_Style2,
+                      ),
+                    ],
+                  ),
+                ),
+
+                Container(child: _Labour_Assigning_List()),
+
+                //SUBMIT BUTTON
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 50, bottom: 50, left: 30, right: 30),
+                  child: CommonElevatedButton(context, 'Submit', () {
+                    FocusManager.instance.primaryFocus?.unfocus();
+
+                    if (site_id == "") {
+                      ShowToastMessage("Choose Site Name");
+                    } else if (shift_id == "") {
+                      ShowToastMessage("Choose shift time");
+                    } else {
+                      var formData = FormData.fromMap({
+                        "site_id": site_id,
+                        "sub_contractor_id": 113,
+                        "shift_id": shift == "6AM-9AM"
+                            ? 1
+                            : shift == "9AM-6PM"
+                                ? 2
+                                : shift == "After 7PM"
+                                    ? 3
+                                    : 1
+                      });
+
+                      for (int i = 0; i < 5; i++) {
+                        var obj = laboursCategoryList[i].labourCount;
+                        if (obj > 0) {
+                          formData.fields.add(
+                              MapEntry('labours_count[$i][labours]', '$obj'));
+                        }
                       }
-                    }
 
-                    assignLabours(formData);
-                  }
-                }),
-              ),
-            ],
+                      assignLabours(formData);
+                    }
+                  }),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -267,12 +274,13 @@ class _Add_Labours_Assigning_ScreenState
                   )),
               const Spacer(),
               Container(
-                width: MediaQuery.of(context).size.width/5.5,
-                child: textFormField(
-                  hintText: '00',
+                width: MediaQuery.of(context).size.width / 5.5,
+                child: textFormField1(
+                  hintText: '0',
+                  initValue:
+                      "${laboursCategoryList[index].labourCount != 0 ? laboursCategoryList[index].labourCount : ""}",
                   keyboardtype: TextInputType.number,
                   inputFormatters: null,
-                  Controller: _labourCount,
                   validating: (value) {
                     if (value == null || value.isEmpty) {
                       return "Please Enter Valid${'Number'}";
@@ -282,7 +290,15 @@ class _Add_Labours_Assigning_ScreenState
                     }
                     return null;
                   },
-                  onChanged: null,
+                  onChanged: (obj) {
+                    setState(() {
+                      if (obj.length != 0) {
+                        laboursCategoryList[index].labourCount =
+                            int.parse("${obj}");
+                      }
+                    });
+                    print("object ${obj}");
+                  },
                 ),
               ),
               // Container(

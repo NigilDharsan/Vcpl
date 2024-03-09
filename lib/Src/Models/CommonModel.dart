@@ -3,7 +3,9 @@ class CommonModel {
   Data? data;
   String? message;
 
-  CommonModel({this.success, this.data, this.message});
+  Message? messageError;
+
+  CommonModel({this.success, this.data, this.message, this.messageError});
 
   CommonModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
@@ -16,7 +18,14 @@ class CommonModel {
     } else {
       data = json['data'];
     }
-    message = json['message'];
+
+    if (json['message'] is Map<String, dynamic>) {
+      messageError = json['message'] != null
+          ? new Message.fromJson(json['message'])
+          : null;
+    } else {
+      message = json['message'];
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -26,6 +35,27 @@ class CommonModel {
       data['data'] = this.data!.toJson();
     }
     data['message'] = this.message;
+
+    if (this.messageError != null) {
+      data['message'] = this.messageError!.toJson();
+    }
+
+    return data;
+  }
+}
+
+class Message {
+  List<String>? transferSlipNo;
+
+  Message({this.transferSlipNo});
+
+  Message.fromJson(Map<String, dynamic> json) {
+    transferSlipNo = json['transfer_slip_no'].cast<String>();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['transfer_slip_no'] = this.transferSlipNo;
     return data;
   }
 }

@@ -146,8 +146,10 @@ class _Add_Centering_Transaction_ScreenState
       }
     } else {
       LoadingOverlay.hide();
-
-      ShowToastMessage(postResponse.message ?? "");
+      postResponse.messageError?.transferSlipNo != null
+          ? ShowToastMessage(
+              postResponse.messageError?.transferSlipNo?[0] ?? "")
+          : ShowToastMessage(postResponse.message ?? "");
     }
   }
 

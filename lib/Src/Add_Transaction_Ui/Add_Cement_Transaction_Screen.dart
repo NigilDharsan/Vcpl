@@ -114,7 +114,7 @@ class _Add_Cement_Transaction_ScreenState
 
     if (postResponse.success == true) {
       setState(() {
-        _openingBalance.text = postResponse.data!.stock.toString();
+        _openingBalance.text = postResponse.data?.stock.toString() ?? "0";
       });
     } else {
       ShowToastMessage(postResponse.message ?? "");
@@ -143,7 +143,10 @@ class _Add_Cement_Transaction_ScreenState
         Navigator.pop(context);
       }
     } else {
-      ShowToastMessage(postResponse.message ?? "");
+      postResponse.messageError?.transferSlipNo != null
+          ? ShowToastMessage(
+              postResponse.messageError?.transferSlipNo?[0] ?? "")
+          : ShowToastMessage(postResponse.message ?? "");
     }
   }
 
@@ -444,10 +447,6 @@ class _Add_Cement_Transaction_ScreenState
                           ShowToastMessage("Choose Site Name");
                         } else if (vechileID == "") {
                           ShowToastMessage("Choose vehicle number");
-                        } else if (!(int.parse(_Bags.text) <=
-                            int.parse(_openingBalance.text))) {
-                          ShowToastMessage(
-                              "Quantity is Greater than Opening Balance");
                         } else {
                           var formData = FormData.fromMap({
                             "transaction_type": 2,

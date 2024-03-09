@@ -23,7 +23,52 @@ Widget textFormField(
       inputFormatters: inputFormatters,
       validator: validating,
       decoration: InputDecoration(
-        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0,),
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 10.0,
+          horizontal: 10.0,
+        ),
+        hintText: hintText,
+        hintStyle: phoneHT,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5),
+          borderSide: BorderSide(color: black2),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5),
+          borderSide: BorderSide(color: black2),
+        ),
+        fillColor: white2,
+        filled: true,
+      ),
+      onChanged: onChanged,
+      textInputAction: TextInputAction.next,
+      style: Textfield_Style,
+      keyboardType: keyboardtype,
+    ),
+  );
+}
+
+Widget textFormField1(
+    {String? Function(String?)? validating,
+    String initValue = "",
+    bool? isEnabled,
+    void Function(String)? onChanged,
+    required String hintText,
+    List<TextInputFormatter>? inputFormatters,
+    required TextInputType keyboardtype}) {
+  return Container(
+    // height: 50,
+    child: TextFormField(
+      initialValue: initValue,
+      enabled: isEnabled,
+      textCapitalization: TextCapitalization.none,
+      inputFormatters: inputFormatters,
+      validator: validating,
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 10.0,
+          horizontal: 10.0,
+        ),
         hintText: hintText,
         hintStyle: phoneHT,
         border: OutlineInputBorder(

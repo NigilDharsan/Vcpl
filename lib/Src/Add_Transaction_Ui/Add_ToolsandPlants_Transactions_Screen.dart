@@ -140,7 +140,10 @@ class _Add_ToolsAndPlant_Transaction_ScreenState
               builder: (context) =>
                   Pending_Transaction_Screen("ToolsandPlants Transactions")));
     } else {
-      ShowToastMessage(postResponse.message ?? "");
+      postResponse.messageError?.transferSlipNo != null
+          ? ShowToastMessage(
+              postResponse.messageError?.transferSlipNo?[0] ?? "")
+          : ShowToastMessage(postResponse.message ?? "");
     }
   }
 
