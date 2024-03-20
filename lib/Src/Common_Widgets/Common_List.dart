@@ -295,14 +295,20 @@ Widget Pending_Transaction(context,
               margin: EdgeInsets.only(bottom: 20),
               alignment: Alignment.topLeft,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
                     'Site Name : ',
                     style: cardDetailT,
                   ),
-                  Text(
-                    pendingTrans.siteName ?? "",
-                    style: DateT,
+                  Expanded(
+                    child: Text(
+                      pendingTrans.siteName ?? "",
+                      style: DateT,
+                      softWrap: false,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ],
               )),

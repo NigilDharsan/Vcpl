@@ -183,7 +183,7 @@ class _Pending_Transaction_ScreenState
                         final getObj = pendingApprovalList[index];
 
                         var formData = FormData.fromMap({
-                          "site_id": getObj.toSiteId,
+                          "site_id": getObj.currentSiteId,
                           "quantity": getObj.quantity,
                           "ctid": getObj.ctid,
                           "material_id": getObj.materialId
